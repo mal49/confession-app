@@ -1,6 +1,7 @@
 import { Env } from '../index';
 import { ApiError } from '../middleware/error-handler';
 import { addCorsHeaders } from '../middleware/cors';
+import { requireTurnstile } from '../middleware/turnstile';
 
 /**
  * Confession Routes
@@ -43,19 +44,83 @@ export async function confessionRoutes(request: Request, env: Env, ctx: Executio
 }
 
 async function submitConfession(request: Request, env: Env): Promise<Response> {
-  // TODO: Implement confession submission
-  // - Validate request body
-  // - Verify Turnstile token
-  // - Check rate limiting
-  // - Filter content
-  // - Store in D1
+  // Parse request body
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    throw new ApiError('Invalid JSON in request body', 400);
+  }
 
-  return addCorsHeaders(
-    new Response(
-      JSON.stringify({ success: true, message: 'Confession submitted (placeholder)' }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+  const { content, category, turnstileToken } = body;
+
+  // Validate required fields
+  if (!content || typeof content !== 'string') {
+    throw new ApiError('Content is required', 400);
+  }
+
+  if (!category || typeof category !== 'string') {
+    throw new ApiError('Category is required', 400);
+  }
+
+  // Validate content length (500-800 characters)
+  if (content.length < 500 || content.length > 800) {
+    throw new ApiError('Content must be between 500 and 800 characters', 400);
+  }
+
+  // Verify Turnstile token
+  const clientIP = request.headers.get('CF-Connecting-IP') || undefined;
+  await requireTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, clientIP);
+
+  // TODO: Check rate limiting
+  // TODO: Filter content
+  
+  // Store in D1
+  const ipHash = clientIP 
+    ? await hashIP(clientIP) 
+    : null;
+
+  try {
+    const result = await env.DB.prepare(
+      `INSERT INTO confessions (content, category, ip_hash, turnstile_token, status)
+       VALUES (?, ?, ?, ?, 'pending')
+       RETURNING id`
     )
-  );
+      .bind(content, category, ipHash, turnstileToken)
+      .first<{ id: number }>();
+
+    if (!result) {
+      throw new ApiError('Failed to create confession', 500);
+    }
+
+    return addCorsHeaders(
+      new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            id: result.id,
+            status: 'pending',
+            message: 'Confession submitted successfully and is awaiting review.',
+          },
+        }),
+        { status: 201, headers: { 'Content-Type': 'application/json' } }
+      )
+    );
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new ApiError('Failed to save confession', 500);
+  }
+}
+
+/**
+ * Hash an IP address for rate limiting (privacy-preserving)
+ */
+async function hashIP(ip: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(ip + 'confession-app-salt'); // Add salt
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function getPendingConfessions(request: Request, env: Env): Promise<Response> {
