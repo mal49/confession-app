@@ -7,7 +7,7 @@ const TOAST_REMOVE_DELAY = 5000
 export type ToasterToast = {
   id: string
   title?: string
-  description?: string
+  description?: string | ReactNode
   variant?: "default" | "destructive" | "success"
   duration?: number
 }

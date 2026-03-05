@@ -56,9 +56,19 @@ async function fetchApi<T>(
  */
 export const confessionApi = {
   /**
-   * Submit a new confession
+   * Submit a new confession (single post)
    */
   async submit(data: CreateConfessionRequest): Promise<ApiResponse<ConfessionSubmitResponse>> {
+    return fetchApi<ConfessionSubmitResponse>('/api/confession', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Submit a thread (multiple posts)
+   */
+  async submitThread(data: { contents: string[]; turnstileToken: string }): Promise<ApiResponse<ConfessionSubmitResponse>> {
     return fetchApi<ConfessionSubmitResponse>('/api/confession', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -102,7 +112,35 @@ export const confessionApi = {
       },
     });
   },
+
+  /**
+   * Edit a confession content (admin only)
+   */
+  async edit(id: number, content: string): Promise<ApiResponse<ModerationActionResponse>> {
+    return fetchApi<ModerationActionResponse>(`/api/confession/${id}/edit`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+      headers: {
+        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+      },
+    });
+  },
 };
+
+// Threads configuration response
+export interface ThreadsStatusResponse {
+  configured: boolean;
+  valid?: boolean;
+  error?: string;
+  message: string;
+}
+
+// Test post response
+export interface TestPostResponse {
+  postId: string;
+  permalink: string;
+  message: string;
+}
 
 /**
  * Admin API methods
@@ -114,6 +152,30 @@ export const adminApi = {
   async getStats(): Promise<ApiResponse<AdminStatsResponse>> {
     return fetchApi<AdminStatsResponse>('/api/admin/stats', {
       method: 'GET',
+      headers: {
+        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+      },
+    });
+  },
+
+  /**
+   * Get Threads configuration status
+   */
+  async getThreadsStatus(): Promise<ApiResponse<ThreadsStatusResponse>> {
+    return fetchApi<ThreadsStatusResponse>('/api/admin/threads-status', {
+      method: 'GET',
+      headers: {
+        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+      },
+    });
+  },
+
+  /**
+   * Test Threads posting (posts a test message)
+   */
+  async testThreadsPost(): Promise<ApiResponse<TestPostResponse>> {
+    return fetchApi<TestPostResponse>('/api/admin/test-threads', {
+      method: 'POST',
       headers: {
         'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
       },

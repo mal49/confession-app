@@ -1,87 +1,45 @@
+/* Import playful fonts first */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 /* ========================================
-   THEME SYSTEM - LIGHT & DARK MODES
+   PLAYFUL CARTOON THEME - ceritaAnon
    ======================================== */
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Colors that work for both themes */
-  --color-bg-primary: var(--bg-primary);
-  --color-bg-secondary: var(--bg-secondary);
-  --color-bg-tertiary: var(--bg-tertiary);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-border: var(--border-color);
-  --color-accent: var(--accent);
-}
-
-/* ========================================
-   DARK THEME (Default)
-   ======================================== */
-.dark {
-  --bg-primary: #000000;
-  --bg-secondary: #18181b;
-  --bg-tertiary: #27272a;
-  --bg-card: #18181b;
-  --bg-input: #27272a;
-  --bg-hover: #27272a;
+  /* Playful pastel colors */
+  --color-bg-cream: #FFFBF5;
+  --color-bg-soft-blue: #E8F4FD;
+  --color-bg-soft-pink: #FDE8F0;
+  --color-bg-soft-yellow: #FEF7E8;
+  --color-bg-soft-purple: #F3E8FD;
   
-  --text-primary: #fafaf9;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-placeholder: #52525b;
+  /* Primary colors */
+  --color-primary-pink: #FF7EB3;
+  --color-primary-pink-hover: #FF6BA3;
+  --color-primary-blue: #4A90E2;
+  --color-primary-blue-hover: #3A80D2;
+  --color-primary-yellow: #FFD93D;
+  --color-primary-yellow-hover: #F5C800;
+  --color-primary-purple: #9B59B6;
   
-  --border-color: #27272a;
-  --border-hover: #3f3f46;
-  --border-subtle: rgba(39, 39, 42, 0.5);
+  /* Text colors */
+  --color-text-dark: #2D3436;
+  --color-text-muted: #636E72;
+  --color-text-light: #B2BEC3;
   
-  --accent: #fbbf24;
-  --accent-hover: #f59e0b;
+  /* Border colors */
+  --color-border-playful: #DFE6E9;
+  --color-border-dark: #2D3436;
   
-  --button-primary-bg: #fafaf9;
-  --button-primary-text: #18181b;
-  --button-primary-hover: #ffffff;
-  
-  --button-secondary-bg: #27272a;
-  --button-secondary-text: #a1a1aa;
-  --button-secondary-hover: #3f3f46;
-}
-
-/* ========================================
-   LIGHT THEME
-   ======================================== */
-.light {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f4f4f5;
-  --bg-tertiary: #e4e4e7;
-  --bg-card: #ffffff;
-  --bg-input: #f4f4f5;
-  --bg-hover: #e4e4e7;
-  
-  --text-primary: #18181b;
-  --text-secondary: #52525b;
-  --text-muted: #a1a1aa;
-  --text-placeholder: #a1a1aa;
-  
-  --border-color: #e4e4e7;
-  --border-hover: #d4d4d8;
-  --border-subtle: rgba(228, 228, 231, 0.8);
-  
-  --accent: #f59e0b;
-  --accent-hover: #d97706;
-  
-  --button-primary-bg: #18181b;
-  --button-primary-text: #fafaf9;
-  --button-primary-hover: #27272a;
-  
-  --button-secondary-bg: #f4f4f5;
-  --button-secondary-text: #52525b;
-  --button-secondary-hover: #e4e4e7;
+  /* Font families */
+  --font-family-display: 'Fredoka', sans-serif;
+  --font-family-body: 'Nunito', sans-serif;
 }
 
 /* ========================================
@@ -100,13 +58,12 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.5;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--color-bg-cream);
+  color: var(--color-text-dark);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -115,93 +72,222 @@ body {
 }
 
 /* ========================================
-   THEME TRANSITIONS
+   PLAYFUL TYPOGRAPHY
    ======================================== */
 
-.theme-transition {
-  transition: background-color 0.3s ease, 
-              border-color 0.3s ease, 
-              color 0.3s ease,
-              box-shadow 0.3s ease;
+.font-display {
+  font-family: 'Fredoka', sans-serif;
+}
+
+.font-body {
+  font-family: 'Nunito', sans-serif;
 }
 
 /* ========================================
-   SCROLLBAR - Theme aware
+   CARTOON BORDERS & SHADOWS
    ======================================== */
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+.cartoon-border {
+  border: 3px solid var(--color-border-dark);
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 4px;
+.cartoon-shadow {
+  box-shadow: 4px 4px 0px var(--color-border-dark);
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border-hover);
-  border-radius: 4px;
+.cartoon-shadow-sm {
+  box-shadow: 2px 2px 0px var(--color-border-dark);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+.cartoon-shadow-lg {
+  box-shadow: 6px 6px 0px var(--color-border-dark);
+}
+
+.cartoon-shadow-hover {
+  transition: all 0.2s ease;
+}
+
+.cartoon-shadow-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--color-border-dark);
+}
+
+.cartoon-shadow-active:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--color-border-dark);
+}
+
+/* ========================================
+   ICON CIRCLES - Perfectly Round
+   ======================================== */
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--color-border-dark);
+  box-shadow: 3px 3px 0px var(--color-border-dark);
+  flex-shrink: 0;
+}
+
+.icon-circle-yellow {
+  background-color: var(--color-primary-yellow);
+}
+
+.icon-circle-blue {
+  background-color: var(--color-primary-blue);
+}
+
+.icon-circle-pink {
+  background-color: var(--color-primary-pink);
+}
+
+/* ========================================
+   DASHED BORDERS (Playful)
+   ======================================== */
+
+.border-dashed-playful {
+  border: 3px dashed var(--color-border-dark);
+  border-radius: 20px;
 }
 
 /* ========================================
    ANIMATIONS
    ======================================== */
 
-@keyframes fadeInUp {
-  from {
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
     opacity: 0;
-    transform: translateY(30px);
+    transform: scale(0.3);
   }
-  to {
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInScale {
-  from { 
-    opacity: 0; 
-    transform: scale(0.95) translateY(-10px); 
+@keyframes dropdown-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
   }
-  to { 
-    opacity: 1; 
-    transform: scale(1) translateY(0); 
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes progress {
-  from {
-    width: 100%;
+@keyframes pop {
+  0% {
+    transform: scale(1);
   }
-  to {
-    width: 0%;
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.2s ease forwards;
+.animate-float-delayed {
+  animation: float 3s ease-in-out infinite;
+  animation-delay: 1s;
 }
 
-.animate-fade-in-scale {
-  animation: fadeInScale 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+.animate-wiggle {
+  animation: wiggle 2s ease-in-out infinite;
 }
 
-.animate-progress {
-  animation: progress 5s linear forwards;
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.animate-dropdown-in {
+  animation: dropdown-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pop:hover {
+  animation: pop 0.3s ease;
+}
+
+/* ========================================
+   SCROLLBAR - Playful
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-cream);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-pink);
+  border-radius: 10px;
+  border: 2px solid var(--color-bg-cream);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-pink-hover);
+}
+
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+
+.input-playful {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  background: white;
+  border: 3px solid var(--color-border-dark);
+  box-shadow: 3px 3px 0px var(--color-border-dark);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-playful:focus {
+  box-shadow: 5px 5px 0px var(--color-border-dark);
+  transform: translate(-1px, -1px);
+}
+
+.input-playful::placeholder {
+  color: var(--color-text-light);
 }
 
 /* ========================================
@@ -210,10 +296,15 @@ body {
 
 @layer base {
   * {
-    border-color: var(--border-color);
+    border-color: var(--color-border-playful);
   }
   body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    background-color: var(--color-bg-cream);
   }
+}
+
+/* Hide dark mode - we're keeping it playful/light */
+.dark {
+  --color-bg-cream: #FFFBF5;
+  --color-text-dark: #2D3436;
 }
