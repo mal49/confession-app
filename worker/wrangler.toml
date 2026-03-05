@@ -2,11 +2,11 @@ name = "confession-worker"
 main = "src/index.ts"
 compatibility_date = "2024-03-20"
 
-# Cloudflare D1 Database
+# Cloudflare D1 Database (production)
 [[d1_databases]]
 binding = "DB"
 database_name = "confession-db"
-database_id = "fcde7e18-8c8c-4761-8dd5-8608ae876e23"  # Will be filled after creating the database
+database_id = "57274022-804f-4f55-a893-423f67e340f4"
 
 # Environment Variables
 [vars]
@@ -16,6 +16,8 @@ TURNSTILE_SITE_KEY = "0x4AAAAAACmVdC9C4pvlFgCx"
 # Secrets (set via wrangler secret put):
 # - TURNSTILE_SECRET_KEY
 # - ADMIN_API_KEY
+# - THREADS_ACCESS_TOKEN (optional - for auto-posting to Threads)
+# - THREADS_USER_ID (optional - your Threads user ID)
 
 # Development environment
 [env.dev]

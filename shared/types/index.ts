@@ -3,14 +3,6 @@
 // Used by both Frontend and Worker
 // ============================================
 
-// Confession categories
-export type ConfessionCategory = 
-  | 'relationship' 
-  | 'work' 
-  | 'secret' 
-  | 'regret' 
-  | 'other';
-
 // Confession status
 export type ConfessionStatus = 
   | 'pending' 
@@ -22,7 +14,6 @@ export type ConfessionStatus =
 export interface Confession {
   id: number;
   content: string;
-  category: ConfessionCategory;
   status: ConfessionStatus;
   created_at: string;
   updated_at: string;
@@ -34,7 +25,6 @@ export interface Confession {
 // For creating a new confession (request)
 export interface CreateConfessionRequest {
   content: string;
-  category: ConfessionCategory;
   turnstileToken: string;
 }
 
@@ -71,6 +61,12 @@ export interface ModerationActionResponse {
   status: ConfessionStatus;
   action: 'approved' | 'rejected';
   timestamp: string;
+  // Auto-post to Threads fields
+  posted?: boolean;
+  postId?: string;
+  permalink?: string;
+  postError?: string;
+  threadCount?: number; // Number of posts in the thread (if content was long)
 }
 
 // Admin stats response
@@ -80,14 +76,6 @@ export interface AdminStatsResponse {
   rejected: number;
   posted: number;
   total: number;
-}
-
-// Category option for UI
-export interface CategoryOption {
-  value: ConfessionCategory;
-  label: string;
-  description: string;
-  emoji: string;
 }
 
 // Content validation result

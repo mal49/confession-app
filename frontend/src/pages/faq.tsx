@@ -237,16 +237,11 @@ function FAQPage() {
       <footer className="bg-white border-t-[3px] border-[#2D3436] py-8 relative z-10">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <a href="/" className="flex items-center gap-2">
-              <img
-                src="/ceritaAnonLogo.png"
-                alt="ceritaAnon"
-                className="w-12 h-12 object-contain"
-              />
-              <span className="font-display font-bold text-lg text-[#2D3436]">ceritaAnon</span>
+            <a href="/" className="font-display font-bold text-xl text-[#2D3436]">
+              ceritaAnon
             </a>
             
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-6">
               <a href="/about" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
                 About
               </a>
@@ -255,6 +250,9 @@ function FAQPage() {
               </a>
               <a href="/privacy" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
                 Privacy
+              </a>
+              <a href="/admin" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                Admin
               </a>
               <a
                 href="https://www.buymeacoffee.com/ikhmalhanif"

@@ -305,46 +305,41 @@ function PrivacyPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t-[3px] border-[#2D3436] py-6 sm:py-8 relative z-10">
-        <div className="max-w-3xl mx-auto px-4">
-          <div className="flex flex-col items-center gap-3">
-            <a href="/" className="flex items-center gap-2">
-              <img
-                src="/ceritaAnonLogo.png"
-                alt="ceritaAnon"
-                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
-              />
-              <span className="font-display font-bold text-[#2D3436]">ceritaAnon</span>
+      <footer className="bg-white border-t-[3px] border-[#2D3436] py-8 relative z-10">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <a href="/" className="font-display font-bold text-xl text-[#2D3436]">
+              ceritaAnon
             </a>
-            <p className="font-body text-xs sm:text-sm text-[#636E72] text-center">
-              A safe space for the unspoken. Built with care and lots of doodles.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-2">
-              <a
-                href="/"
-                className="font-body text-xs text-[#636E72] hover:text-[#2D3436] transition-colors"
-              >
-                Home
+            
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-6">
+              <a href="/about" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                About
               </a>
-              <span className="text-[#DFE6E9]">·</span>
-              <a
-                href="/admin"
-                className="font-body text-xs text-[#636E72] hover:text-[#2D3436] transition-colors"
-              >
+              <a href="/faq" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                FAQ
+              </a>
+              <a href="/privacy" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                Privacy
+              </a>
+              <a href="/admin" className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
                 Admin
               </a>
-              <span className="text-[#DFE6E9]">·</span>
               <a
                 href="https://www.buymeacoffee.com/ikhmalhanif"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-body text-xs text-[#636E72] hover:text-[#2D3436] transition-colors flex items-center gap-1"
-              >
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors flex items-center gap-1">
                 <span>☕</span> Buy me a coffee
               </a>
-              <span className="text-[#DFE6E9]">·</span>
-              <span className="font-body text-xs text-[#B2BEC3]">Made with 💕</span>
+              <span className="font-body text-sm text-[#B2BEC3]">Made with 💕</span>
             </div>
+          </div>
+          
+          <div className="mt-6 pt-6 border-t border-[#DFE6E9] text-center">
+            <p className="font-body text-xs text-[#B2BEC3]">
+              A safe space for the unspoken. Built with care and lots of doodles.
+            </p>
           </div>
         </div>
       </footer>

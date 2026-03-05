@@ -1,6 +1,7 @@
 import { confessionRoutes } from './routes/confession';
 import { adminRoutes } from './routes/admin';
-import { corsMiddleware } from './middleware/cors';
+import { corsMiddleware, addCorsHeaders } from './middleware/cors';
+import { addSecurityHeaders } from './middleware/security';
 import { errorHandler } from './middleware/error-handler';
 
 // Export the Worker entry point
@@ -9,35 +10,37 @@ export default {
     try {
       // Apply CORS
       const corsResponse = corsMiddleware(request);
-      if (corsResponse) return corsResponse;
+      if (corsResponse) return addSecurityHeaders(corsResponse);
 
       const url = new URL(request.url);
       const path = url.pathname;
+      let response: Response;
 
       // Route handling
       if (path.startsWith('/api/confession')) {
-        return await confessionRoutes(request, env, ctx);
-      }
-      
-      if (path.startsWith('/api/admin')) {
-        return await adminRoutes(request, env, ctx);
-      }
-
-      // Health check endpoint
-      if (path === '/api/health') {
-        return new Response(
+        response = await confessionRoutes(request, env, ctx);
+      } else if (path.startsWith('/api/admin')) {
+        response = await adminRoutes(request, env, ctx);
+      } else if (path === '/api/health') {
+        response = new Response(
           JSON.stringify({ success: true, message: 'OK', timestamp: new Date().toISOString() }),
           { status: 200, headers: { 'Content-Type': 'application/json' } }
         );
+      } else {
+        // 404 for unknown routes
+        response = new Response(
+          JSON.stringify({ success: false, error: 'Not Found' }),
+          { status: 404, headers: { 'Content-Type': 'application/json' } }
+        );
       }
 
-      // 404 for unknown routes
-      return new Response(
-        JSON.stringify({ success: false, error: 'Not Found' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
+      // Add CORS and security headers
+      response = addCorsHeaders(response, request.headers.get('Origin') || undefined);
+      response = addSecurityHeaders(response);
+      
+      return response;
     } catch (error) {
-      return errorHandler(error);
+      return addSecurityHeaders(errorHandler(error));
     }
   },
 };
@@ -48,4 +51,7 @@ export interface Env {
   TURNSTILE_SECRET_KEY: string;
   ADMIN_API_KEY: string;
   TURNSTILE_SITE_KEY: string;
+  // Threads API credentials (optional - auto-post if configured)
+  THREADS_ACCESS_TOKEN?: string;
+  THREADS_USER_ID?: string;
 }

@@ -402,14 +402,65 @@ function HomePage() {
         <section className="px-4 py-12 md:py-20">
           <div className="max-w-4xl mx-auto text-center">
             {/* Title */}
-            <motion.h1
-              className="font-display text-4xl md:text-6xl font-bold text-[#2D3436] mb-4"
+            <motion.div
+              className="mb-6"
               initial={{ opacity: 0, y: 40 }}
               animate={mounted ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}>
-              Spill Your Story, Stay{" "}
-              <span className="text-[#4A90E2]">Anonymous.</span>
-            </motion.h1>
+              <h1 className="font-display text-5xl md:text-7xl font-black text-[#2D3436] leading-[1.1] tracking-tight">
+                <span className="relative inline-block">
+                  <span className="relative z-10">Confess it.</span>
+                  <motion.span
+                    className="absolute -bottom-2 left-0 w-full h-4 bg-[#FFD93D] -z-0 rounded-full"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                  />
+                </span>
+                <br />
+                <span className="relative inline-block mt-2">
+                  <motion.span
+                    className="inline-block"
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}>
+                    No one will know it&apos;s
+                  </motion.span>{" "}
+                  <span className="relative inline-block">
+                    <motion.span
+                      className="inline-block text-[#4A90E2] drop-shadow-[4px_4px_0px_rgba(45,52,54,1)]"
+                      animate={{
+                        y: [0, -8, 0],
+                        rotate: [0, -3, 3, 0],
+                      }}
+                      transition={{
+                        duration: 2.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}>
+                      You
+                    </motion.span>
+                    <motion.span
+                      className="absolute -right-6 -top-4 text-3xl"
+                      animate={{
+                        rotate: [0, 20, -20, 0],
+                        scale: [1, 1.3, 1],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}>
+                      ✨
+                    </motion.span>
+                  </span>
+                  <span className="text-[#2D3436]">.</span>
+                </span>
+              </h1>
+            </motion.div>
 
             {/* Subtitle */}
             <motion.p
@@ -418,11 +469,11 @@ function HomePage() {
               animate={mounted ? { opacity: 1, y: 0 } : {}}
               transition={{
                 duration: 0.8,
-                delay: 0.1,
+                delay: 0.2,
                 ease: [0.25, 0.1, 0.25, 1],
               }}>
-              Share secrets, confession, or late-night thoughts — no names, no
-              judgement.
+              Sometimes strangers on the internet understand you better than
+              people in real life{" "}
             </motion.p>
 
             <AnimatePresence mode="wait">
@@ -446,7 +497,7 @@ function HomePage() {
                 <>
                   {/* Speech Bubble Input */}
                   <motion.div
-                    className="max-w-2xl mx-auto"
+                    className="max-w-2xl mx-auto relative"
                     initial={{ opacity: 0, y: 60 }}
                     animate={mounted ? { opacity: 1, y: 0 } : {}}
                     transition={{
@@ -455,48 +506,78 @@ function HomePage() {
                       ease: [0.25, 0.1, 0.25, 1],
                     }}
                     onClick={() => setShowForm(true)}>
+                    {/* Floating decorative bubbles */}
+                    <motion.div 
+                      className="absolute -left-8 top-8 w-6 h-6 rounded-full bg-[#FFD93D] border-[2px] border-[#2D3436]"
+                      animate={{ y: [0, -10, 0], scale: [1, 1.1, 1] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    <motion.div 
+                      className="absolute -right-6 top-16 w-4 h-4 rounded-full bg-[#FF7EB3] border-[2px] border-[#2D3436]"
+                      animate={{ y: [0, -8, 0], scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    />
+                    <motion.div 
+                      className="absolute right-20 -top-4 w-8 h-8 rounded-full bg-[#4A90E2]/30"
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    
                     <motion.div
                       className="relative"
-                      whileHover={{ scale: 1.01 }}
+                      whileHover={{ scale: 1.02, rotate: [0, -1, 1, 0] }}
                       transition={{
                         type: "spring",
-                        stiffness: 400,
-                        damping: 25,
+                        stiffness: 300,
+                        damping: 20,
                       }}>
-                      {/* Speech Bubble */}
-                      <div className="bg-white rounded-[32px] border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] p-6 md:p-8 cursor-pointer hover:shadow-[12px_12px_0px_#2D3436] hover:-translate-y-1 transition-all duration-300 group">
-                        <div className="flex items-start gap-4">
-                          {/* Avatar Placeholder */}
+                      {/* Main Bubble */}
+                      <div className="bg-white rounded-[40px] border-[4px] border-[#2D3436] shadow-[10px_10px_0px_#2D3436] p-6 md:p-8 cursor-pointer hover:shadow-[14px_14px_0px_#2D3436] hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+                        {/* Shine effect */}
+                        <div className="absolute top-0 left-8 w-20 h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        
+                        <div className="flex items-start gap-5">
+                          {/* Cartoon Avatar */}
                           <motion.div
-                            className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFD93D] to-[#FFA502] border-[3px] border-[#2D3436] flex items-center justify-center shrink-0"
-                            animate={{ rotate: [0, 5, -5, 0] }}
+                            className="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#FFD93D] to-[#FFA502] border-[4px] border-[#2D3436] flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#2D3436]"
+                            animate={{ 
+                              rotate: [0, 8, -8, 0],
+                              y: [0, -3, 0],
+                            }}
                             transition={{
-                              duration: 4,
+                              duration: 3,
                               repeat: Infinity,
                               ease: "easeInOut",
                             }}>
-                            <span className="font-display font-bold text-[#2D3436]">
-                              ?
-                            </span>
+                            <span className="font-display font-bold text-2xl text-[#2D3436]">?</span>
+                            {/* Eyes */}
+                            <div className="absolute top-4 left-3 w-1.5 h-1.5 bg-[#2D3436] rounded-full" />
+                            <div className="absolute top-4 right-3 w-1.5 h-1.5 bg-[#2D3436] rounded-full" />
                           </motion.div>
 
                           {/* Input Area */}
-                          <div className="flex-1 text-left">
+                          <div className="flex-1 text-left pt-2">
                             <p className="font-body text-[#B2BEC3] text-lg mb-4">
-                              Write your secret here...
+                              Write your secret here...{" "}
+                              <motion.span
+                                className="inline-block"
+                                animate={{ opacity: [1, 0.3, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}>
+                                |
+                              </motion.span>
                             </p>
 
-                            {/* Fake text lines */}
-                            <div className="space-y-2 opacity-30">
+                            {/* Animated placeholder lines */}
+                            <div className="space-y-3">
                               <motion.div
-                                className="h-2 bg-[#DFE6E9] rounded-full w-3/4"
+                                className="h-3 bg-gradient-to-r from-[#DFE6E9] to-[#E8F4FD] rounded-full w-3/4 border-[1px] border-[#DFE6E9]"
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
                                 transition={{ duration: 0.8, delay: 0.5 }}
                                 style={{ originX: 0 }}
                               />
                               <motion.div
-                                className="h-2 bg-[#DFE6E9] rounded-full w-1/2"
+                                className="h-3 bg-gradient-to-r from-[#DFE6E9] to-[#FDE8F0] rounded-full w-1/2 border-[1px] border-[#DFE6E9]"
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
                                 transition={{ duration: 0.8, delay: 0.7 }}
@@ -507,20 +588,39 @@ function HomePage() {
                         </div>
 
                         {/* Post It Button */}
-                        <div className="flex justify-end mt-4">
+                        <div className="flex justify-end mt-6">
                           <motion.button
-                            className="px-6 py-2.5 rounded-full font-display font-bold text-sm bg-[#FF7EB3] text-white border-[3px] border-[#2D3436] shadow-[3px_3px_0px_#2D3436] group-hover:shadow-[5px_5px_0px_#2D3436] group-hover:-translate-y-0.5 transition-all flex items-center gap-2"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.98 }}>
-                            <span>Post It!</span>
-                            <Heart className="w-4 h-4 fill-white" />
+                            className="relative px-8 py-3 rounded-full font-display font-bold text-base bg-[#FF7EB3] text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] group-hover:shadow-[6px_6px_0px_#2D3436] group-hover:-translate-y-1 transition-all flex items-center gap-2 overflow-hidden"
+                            whileHover={{ scale: 1.08 }}
+                            whileTap={{ scale: 0.95 }}>
+                            <span className="relative z-10">Post It!</span>
+                            <motion.div
+                              className="relative z-10"
+                              animate={{ scale: [1, 1.2, 1] }}
+                              transition={{ duration: 1, repeat: Infinity }}>
+                              <Heart className="w-5 h-5 fill-white" />
+                            </motion.div>
+                            {/* Button shine */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                           </motion.button>
                         </div>
                       </div>
 
-                      {/* Speech Bubble Tail */}
-                      <div className="absolute -bottom-5 left-16 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[20px] border-t-[#2D3436]"></div>
-                      <div className="absolute -bottom-[14px] left-[67px] w-0 h-0 border-l-[17px] border-l-transparent border-r-[17px] border-r-transparent border-t-[17px] border-t-white"></div>
+                      {/* Speech Bubble Tail - Cartoon style */}
+                      <div className="absolute -bottom-6 left-20 w-0 h-0 border-l-[24px] border-l-transparent border-r-[24px] border-r-transparent border-t-[24px] border-t-[#2D3436]"></div>
+                      <div className="absolute -bottom-[18px] left-[83px] w-0 h-0 border-l-[18px] border-l-transparent border-r-[18px] border-r-transparent border-t-[18px] border-t-white"></div>
+                      
+                      {/* Small bubbles */}
+                      <motion.div 
+                        className="absolute -bottom-10 left-28 w-4 h-4 rounded-full bg-white border-[3px] border-[#2D3436]"
+                        animate={{ y: [0, -5, 0], opacity: [1, 0.7, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                      />
+                      <motion.div 
+                        className="absolute -bottom-12 left-36 w-3 h-3 rounded-full bg-white border-[2px] border-[#2D3436]"
+                        animate={{ y: [0, -3, 0], opacity: [1, 0.6, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+                      />
                     </motion.div>
                   </motion.div>
 
@@ -535,7 +635,7 @@ function HomePage() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}>
                         <h2 className="font-display text-3xl md:text-4xl font-bold text-[#2D3436] mb-3">
-                          Why We&apos;re Different
+                          Your Thoughts. No Judgement
                         </h2>
                         <p className="font-body text-[#636E72] max-w-md mx-auto">
                           Safe, secure, and absolutely adorable. Your secrets
@@ -555,7 +655,7 @@ function HomePage() {
                             />
                           }
                           title="Always Protected"
-                          description="Our happy shield-chara guards your data with a smile! No personal info stored, ever."
+                          description="No accounts, No tracking, No personal data. Just your thoughts, safely shared."
                           color="#FFD93D"
                           delay={0}
                         />
@@ -569,7 +669,7 @@ function HomePage() {
                             />
                           }
                           title="Top Secret"
-                          description="A winking lock ensures only you know it's actually you. Complete anonymity guaranteed."
+                          description="Stay anonymous your words may travel. Your Identity never does."
                           color="#4A90E2"
                           delay={0.15}
                         />
@@ -583,7 +683,7 @@ function HomePage() {
                             />
                           }
                           title="Safe Space"
-                          description="A pulsing heart for a kind and supportive little community. Spread love, not hate."
+                          description="Say what you've been holding in. Someone out there might feel the same."
                           color="#FF7EB3"
                           delay={0.3}
                         />
@@ -607,28 +707,33 @@ function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}>
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2">
-              <img
-                src="/ceritaAnonLogo.png"
-                alt="ceritaAnon"
-                className="w-12 h-12 object-contain"
-              />
-              <span className="font-display font-bold text-lg text-[#2D3436]">
-                ceritaAnon
-              </span>
+            <a
+              href="/"
+              className="font-display font-bold text-xl text-[#2D3436]">
+              ceritaAnon
             </a>
 
             {/* Links */}
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-6">
               <a
-                href="/admin"
+                href="/about"
                 className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
-                Admin
+                About
+              </a>
+              <a
+                href="/faq"
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                FAQ
               </a>
               <a
                 href="/privacy"
                 className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
                 Privacy
+              </a>
+              <a
+                href="/admin"
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                Admin
               </a>
               <a
                 href="https://www.buymeacoffee.com/ikhmalhanif"

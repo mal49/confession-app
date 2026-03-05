@@ -1,4 +1,4 @@
-# 🪶 Unveil - Anonymous Confession App
+# 🪶 ceritaAnon - Anonymous Confession App
 
 A safe space for unspoken thoughts. Built with Cloudflare's edge infrastructure for zero-cost, production-ready deployment.
 

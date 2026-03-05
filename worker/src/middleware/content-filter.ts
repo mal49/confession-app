@@ -99,22 +99,18 @@ function checkSuspiciousPatterns(content: string): boolean {
  * Returns true if content passes quality checks
  */
 function checkQuality(content: string): { passed: boolean; reason?: string } {
-  // Check minimum word count
-  const wordCount = content.trim().split(/\s+/).length;
-  if (wordCount < 20) {
-    return { passed: false, reason: 'Content is too short (minimum 20 words)' };
-  }
-  
   // Check for excessive repetition of words
   const words = content.toLowerCase().match(/\b\w+\b/g) || [];
-  const wordFreq = new Map<string, number>();
-  for (const word of words) {
-    wordFreq.set(word, (wordFreq.get(word) || 0) + 1);
-  }
-  
-  const maxFreq = Math.max(...wordFreq.values());
-  if (maxFreq > words.length * 0.3) {
-    return { passed: false, reason: 'Content has excessive word repetition' };
+  if (words.length > 0) {
+    const wordFreq = new Map<string, number>();
+    for (const word of words) {
+      wordFreq.set(word, (wordFreq.get(word) || 0) + 1);
+    }
+    
+    const maxFreq = Math.max(...wordFreq.values());
+    if (maxFreq > words.length * 0.5) {
+      return { passed: false, reason: 'Content has excessive word repetition' };
+    }
   }
   
   return { passed: true };

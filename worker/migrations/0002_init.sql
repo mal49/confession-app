@@ -5,6 +5,7 @@
 CREATE TABLE IF NOT EXISTS confessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT NOT NULL,
+    category TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     ip_hash TEXT,                        -- Hashed IP for rate limiting (privacy-safe)
     turnstile_token TEXT,                -- CAPTCHA verification token (stored for audit)
@@ -22,6 +23,10 @@ CREATE TABLE IF NOT EXISTS confessions (
 -- Query pending confessions (admin dashboard)
 CREATE INDEX IF NOT EXISTS idx_confessions_status_created 
 ON confessions(status, created_at);
+
+-- Query by category
+CREATE INDEX IF NOT EXISTS idx_confessions_category 
+ON confessions(category);
 
 -- Rate limiting lookups
 CREATE INDEX IF NOT EXISTS idx_confessions_ip_hash_created 

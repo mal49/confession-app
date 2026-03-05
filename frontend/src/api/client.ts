@@ -82,7 +82,7 @@ export const confessionApi = {
     return fetchApi<PendingConfessionsResponse>(`/api/confession/pending?limit=${limit}&offset=${offset}`, {
       method: 'GET',
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
@@ -95,7 +95,7 @@ export const confessionApi = {
       method: 'POST',
       body: JSON.stringify({ notes }),
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
@@ -108,7 +108,7 @@ export const confessionApi = {
       method: 'POST',
       body: JSON.stringify({ notes }),
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
@@ -121,7 +121,7 @@ export const confessionApi = {
       method: 'PUT',
       body: JSON.stringify({ content }),
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
@@ -153,7 +153,7 @@ export const adminApi = {
     return fetchApi<AdminStatsResponse>('/api/admin/stats', {
       method: 'GET',
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
@@ -165,7 +165,7 @@ export const adminApi = {
     return fetchApi<ThreadsStatusResponse>('/api/admin/threads-status', {
       method: 'GET',
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
@@ -177,7 +177,7 @@ export const adminApi = {
     return fetchApi<TestPostResponse>('/api/admin/test-threads', {
       method: 'POST',
       headers: {
-        'X-API-Key': import.meta.env.VITE_ADMIN_API_KEY || '',
+        'X-API-Key': localStorage.getItem('admin_api_key') || '',
       },
     });
   },
