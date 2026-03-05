@@ -14,9 +14,9 @@ dir = "dist"
 # VITE_TURNSTILE_SITE_KEY - Turnstile site key
 
 [[env.production.vars]]
-VITE_API_URL = "https://confession-worker.your-subdomain.workers.dev"
+VITE_API_URL = "https://confession-worker.ikhmalhanif60.workers.dev"
 
 [env.preview]
 # Preview environment
 [[env.preview.vars]]
-VITE_API_URL = "https://confession-worker-dev.your-subdomain.workers.dev"
+VITE_API_URL = "https://confession-worker-dev.ikhmalhanif60.workers.dev"

@@ -1,63 +1,87 @@
-/* Import Google Fonts First */
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,400&display=swap');
-
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 /* ========================================
-   MIDNIGHT CONFESSIONAL - DESIGN SYSTEM
+   THEME SYSTEM - LIGHT & DARK MODES
    ======================================== */
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Custom Fonts */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Source Serif 4', Georgia, serif;
-  --font-handwriting: 'Caveat', cursive;
-  
-  /* Midnight Color Palette */
-  --color-midnight-950: #030305;
-  --color-midnight-900: #0a0a0f;
-  --color-midnight-800: #12121a;
-  --color-midnight-700: #1a1a2e;
-  --color-midnight-600: #252542;
-  
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-amber-300: #fcd34d;
-  
-  --color-warm-white: #fafaf9;
-  --color-warm-gray: #a8a29e;
+  /* Colors that work for both themes */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border-color);
+  --color-accent: var(--accent);
 }
 
-:root {
-  /* Theme Variables */
-  --radius: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+/* ========================================
+   DARK THEME (Default)
+   ======================================== */
+.dark {
+  --bg-primary: #000000;
+  --bg-secondary: #18181b;
+  --bg-tertiary: #27272a;
+  --bg-card: #18181b;
+  --bg-input: #27272a;
+  --bg-hover: #27272a;
   
-  /* Core Colors */
-  --background: #0a0a0f;
-  --background-gradient-start: #0a0a0f;
-  --background-gradient-end: #1a1a2e;
-  --foreground: #fafaf9;
+  --text-primary: #fafaf9;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-placeholder: #52525b;
   
-  --card: rgba(26, 26, 46, 0.6);
-  --card-border: rgba(251, 191, 36, 0.1);
-  --card-glow: rgba(251, 191, 36, 0.05);
+  --border-color: #27272a;
+  --border-hover: #3f3f46;
+  --border-subtle: rgba(39, 39, 42, 0.5);
   
-  --primary: #f59e0b;
-  --primary-hover: #fbbf24;
-  --primary-foreground: #0a0a0f;
-  
-  --muted: #252542;
-  --muted-foreground: #a8a29e;
   --accent: #fbbf24;
+  --accent-hover: #f59e0b;
   
-  --border: rgba(251, 191, 36, 0.15);
-  --ring: #f59e0b;
+  --button-primary-bg: #fafaf9;
+  --button-primary-text: #18181b;
+  --button-primary-hover: #ffffff;
+  
+  --button-secondary-bg: #27272a;
+  --button-secondary-text: #a1a1aa;
+  --button-secondary-hover: #3f3f46;
+}
+
+/* ========================================
+   LIGHT THEME
+   ======================================== */
+.light {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f4f5;
+  --bg-tertiary: #e4e4e7;
+  --bg-card: #ffffff;
+  --bg-input: #f4f4f5;
+  --bg-hover: #e4e4e7;
+  
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --text-placeholder: #a1a1aa;
+  
+  --border-color: #e4e4e7;
+  --border-hover: #d4d4d8;
+  --border-subtle: rgba(228, 228, 231, 0.8);
+  
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  
+  --button-primary-bg: #18181b;
+  --button-primary-text: #fafaf9;
+  --button-primary-hover: #27272a;
+  
+  --button-secondary-bg: #f4f4f5;
+  --button-secondary-text: #52525b;
+  --button-secondary-hover: #e4e4e7;
 }
 
 /* ========================================
@@ -76,13 +100,13 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: var(--font-body);
-  background: linear-gradient(180deg, var(--background-gradient-start) 0%, var(--background-gradient-end) 100%);
-  background-attachment: fixed;
-  color: var(--foreground);
-  line-height: 1.7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -91,149 +115,37 @@ body {
 }
 
 /* ========================================
-   TYPOGRAPHY
+   THEME TRANSITIONS
    ======================================== */
 
-.font-display {
-  font-family: var(--font-display);
-}
-
-.font-body {
-  font-family: var(--font-body);
-}
-
-.font-handwriting {
-  font-family: var(--font-handwriting);
+.theme-transition {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
 /* ========================================
-   GRAIN TEXTURE OVERLAY
+   SCROLLBAR - Theme aware
    ======================================== */
 
-.grain-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* ========================================
-   GLOW EFFECTS
-   ======================================== */
-
-.glow-amber {
-  box-shadow: 
-    0 0 20px rgba(251, 191, 36, 0.1),
-    0 0 40px rgba(251, 191, 36, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
 }
 
-.glow-text {
-  text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 4px;
 }
 
-/* ========================================
-   CARD STYLES
-   ======================================== */
-
-.confession-card {
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: var(--radius-xl);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.confession-card:hover {
-  border-color: rgba(251, 191, 36, 0.2);
-  box-shadow: 
-    0 0 30px rgba(251, 191, 36, 0.08),
-    0 20px 40px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
-}
-
-/* ========================================
-   BUTTON STYLES
-   ======================================== */
-
-.btn-primary {
-  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-  color: #0a0a0f;
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  border: none;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.btn-primary:hover::before {
-  left: 100%;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-}
-
-.btn-secondary {
-  background: transparent;
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  color: #fbbf24;
-  font-family: var(--font-display);
-  transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-  background: rgba(251, 191, 36, 0.1);
-  border-color: rgba(251, 191, 36, 0.5);
-}
-
-/* ========================================
-   TEXTAREA STYLES
-   ======================================== */
-
-.confession-textarea {
-  background: rgba(10, 10, 15, 0.5);
-  border: 1px solid rgba(251, 191, 36, 0.15);
-  border-radius: var(--radius-lg);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  font-size: 1.125rem;
-  line-height: 1.8;
-  resize: none;
-  transition: all 0.3s ease;
-}
-
-.confession-textarea:focus {
-  outline: none;
-  border-color: rgba(251, 191, 36, 0.4);
-  box-shadow: 
-    0 0 0 3px rgba(251, 191, 36, 0.1),
-    inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.confession-textarea::placeholder {
-  color: var(--muted-foreground);
-  font-style: italic;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 /* ========================================
@@ -256,22 +168,23 @@ body {
   to { opacity: 1; }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { 
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+@keyframes fadeInScale {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(-10px); 
   }
-  50% { 
-    box-shadow: 0 0 40px rgba(251, 191, 36, 0.2);
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
   }
 }
 
@@ -280,119 +193,15 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s ease forwards;
+  animation: fadeIn 0.2s ease forwards;
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+.animate-fade-in-scale {
+  animation: fadeInScale 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
-}
-
-/* Stagger animation delays */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }
-
-/* ========================================
-   DECORATIVE ELEMENTS
-   ======================================== */
-
-.divider-ornament {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: rgba(251, 191, 36, 0.4);
-}
-
-.divider-ornament::before,
-.divider-ornament::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.3), transparent);
-}
-
-.quote-mark {
-  font-family: var(--font-display);
-  font-size: 6rem;
-  line-height: 1;
-  color: rgba(251, 191, 36, 0.15);
-  position: absolute;
-  top: -1rem;
-  left: 1rem;
-  pointer-events: none;
-}
-
-/* ========================================
-   STATUS BADGES
-   ======================================== */
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-}
-
-.status-dot::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  animation: pulse-ring 2s ease-out infinite;
-}
-
-@keyframes pulse-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-.status-connected {
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-}
-
-.status-connected::after {
-  background: #22c55e;
-}
-
-.status-error {
-  background: #ef4444;
-}
-
-/* ========================================
-   SCROLLBAR
-   ======================================== */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(26, 26, 46, 0.5);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(251, 191, 36, 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(251, 191, 36, 0.5);
+.animate-progress {
+  animation: progress 5s linear forwards;
 }
 
 /* ========================================
@@ -401,21 +210,10 @@ body {
 
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: var(--border-color);
   }
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
   }
-}
-
-/* Card component override */
-[data-slot="card"] {
-  background: var(--card) !important;
-  border-color: var(--card-border) !important;
-}
-
-/* Button override */
-[data-slot="button"] {
-  font-family: var(--font-display);
 }

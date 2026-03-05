@@ -2,6 +2,8 @@ import { Env } from '../index';
 import { ApiError } from '../middleware/error-handler';
 import { addCorsHeaders } from '../middleware/cors';
 import { requireTurnstile } from '../middleware/turnstile';
+import { requireRateLimit, getRateLimitStatus } from '../middleware/rate-limit';
+import { requireCleanContent, sanitizeContent, filterContent, ContentFilterResult } from '../middleware/content-filter';
 
 /**
  * Confession Routes
@@ -45,7 +47,7 @@ export async function confessionRoutes(request: Request, env: Env, ctx: Executio
 
 async function submitConfession(request: Request, env: Env): Promise<Response> {
   // Parse request body
-  let body;
+  let body: { content?: string; category?: string; turnstileToken?: string };
   try {
     body = await request.json();
   } catch {
@@ -72,21 +74,36 @@ async function submitConfession(request: Request, env: Env): Promise<Response> {
   const clientIP = request.headers.get('CF-Connecting-IP') || undefined;
   await requireTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY, clientIP);
 
-  // TODO: Check rate limiting
-  // TODO: Filter content
-  
-  // Store in D1
+  // Hash IP for rate limiting and storage
   const ipHash = clientIP 
     ? await hashIP(clientIP) 
     : null;
 
+  // Check rate limiting (3 per hour)
+  requireRateLimit(ipHash, { maxRequests: 3, windowMinutes: 60 });
+  
+  // Sanitize content
+  const sanitizedContent = sanitizeContent(content);
+  
+  // Filter content
+  let filterResult: ContentFilterResult;
   try {
+    filterResult = requireCleanContent(sanitizedContent);
+  } catch (filterError) {
+    // Content was rejected by filter
+    throw filterError;
+  }
+
+  try {
+    // Determine status based on content filter result
+    const initialStatus = filterResult.flagged ? 'pending' : 'pending';
+    
     const result = await env.DB.prepare(
       `INSERT INTO confessions (content, category, ip_hash, turnstile_token, status)
-       VALUES (?, ?, ?, ?, 'pending')
+       VALUES (?, ?, ?, ?, ?)
        RETURNING id`
     )
-      .bind(content, category, ipHash, turnstileToken)
+      .bind(sanitizedContent, category, ipHash, turnstileToken, initialStatus)
       .first<{ id: number }>();
 
     if (!result) {
@@ -99,8 +116,11 @@ async function submitConfession(request: Request, env: Env): Promise<Response> {
           success: true,
           data: {
             id: result.id,
-            status: 'pending',
-            message: 'Confession submitted successfully and is awaiting review.',
+            status: initialStatus,
+            message: filterResult.flagged 
+              ? 'Confession submitted and is awaiting manual review.'
+              : 'Confession submitted successfully and is awaiting review.',
+            flagged: filterResult.flagged,
           },
         }),
         { status: 201, headers: { 'Content-Type': 'application/json' } }

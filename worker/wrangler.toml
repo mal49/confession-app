@@ -6,12 +6,12 @@ compatibility_date = "2024-03-20"
 [[d1_databases]]
 binding = "DB"
 database_name = "confession-db"
-database_id = "your-database-id-here"  # Will be filled after creating the database
+database_id = "fcde7e18-8c8c-4761-8dd5-8608ae876e23"  # Will be filled after creating the database
 
 # Environment Variables
 [vars]
 # These are public vars - secrets should use wrangler secret put
-TURNSTILE_SITE_KEY = "your-turnstile-site-key"
+TURNSTILE_SITE_KEY = "0x4AAAAAACmVdC9C4pvlFgCx"
 
 # Secrets (set via wrangler secret put):
 # - TURNSTILE_SECRET_KEY
