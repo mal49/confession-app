@@ -116,7 +116,7 @@ function FeatureCard({
 
           {/* Shine effect */}
           <div className="absolute inset-0 rounded-2xl overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-linear-to-b from-white/30 to-transparent" />
           </div>
         </motion.div>
 
@@ -125,7 +125,7 @@ function FeatureCard({
           <h3 className="font-display font-bold text-xl text-[#2D3436] mb-3 tracking-tight">
             {title}
           </h3>
-          <p className="font-body text-[#636E72] leading-relaxed">
+          <p className="font-body text-text-muted leading-relaxed">
             {description}
           </p>
         </div>
@@ -174,24 +174,65 @@ function HomePage() {
         turnstileToken,
       });
 
-      if (response.success) {
-        toast({
-          title: "Confession Submitted!",
-          description: (
-            <a
-              href="https://threads.net/@ceritaanon_"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[#2D3436] hover:text-[#4A90E2] transition-colors leading-tight"
-            >
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-black shrink-0">
-                <img src="/threads-app-icon.svg" alt="" className="w-3.5 h-3.5" />
+      if (response.success && response.data) {
+        const data = response.data;
+
+        if (data.autoPosted) {
+          // Confession was auto-posted directly to Threads
+          toast({
+            title: "Posted to Threads! ✨",
+            description: data.permalink ? (
+              <a
+                href={data.permalink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#2D3436] hover:text-primary-blue transition-colors leading-tight"
+              >
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-black shrink-0">
+                  <img src="/threads-app-icon.svg" alt="" className="w-3.5 h-3.5" />
+                </span>
+                <span className="hover:underline">View your confession on Threads</span>
+              </a>
+            ) : (
+              <span className="leading-tight">
+                Your confession was posted to Threads. Follow{" "}
+                <span className="font-semibold">@ceritaanon_</span> to see it.
               </span>
-              <span className="hover:underline">Follow @ceritaanon_ to see it posted</span>
-            </a>
-          ),
-          variant: "success",
-        });
+            ),
+            variant: "success",
+          });
+        } else if (data.needsReview) {
+          // Confession is stored but held for manual review with a reason
+          toast({
+            title: "Your confession needs a quick review",
+            description: data.moderationReason || (
+              <span className="leading-tight">
+                We received your confession but need to review it manually before posting.
+              </span>
+            ),
+            variant: "default",
+          });
+        } else {
+          // Fallback: generic success (e.g. no Threads credentials configured)
+          toast({
+            title: "Confession Submitted!",
+            description: (
+              <a
+                href="https://threads.net/@ceritaanon_"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#2D3436] hover:text-primary-blue transition-colors leading-tight"
+              >
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-black shrink-0">
+                  <img src="/threads-app-icon.svg" alt="" className="w-3.5 h-3.5" />
+                </span>
+                <span className="hover:underline">Follow @ceritaanon_ to see it posted</span>
+              </a>
+            ),
+            variant: "success",
+          });
+        }
+
         setShowForm(false);
       } else {
         toast({
@@ -217,11 +258,11 @@ function HomePage() {
   return (
     <div
       ref={mainRef}
-      className="min-h-screen bg-[#FFFBF5] relative overflow-x-hidden">
+      className="min-h-screen bg-bg-cream relative overflow-x-hidden">
       {/* Decorative Clouds with Parallax */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          className="absolute top-20 left-10 text-[#E8F4FD]"
+          className="absolute top-20 left-10 text-bg-soft-blue"
           style={{ y: cloudY1 }}>
           <motion.div
             animate={{
@@ -238,7 +279,7 @@ function HomePage() {
         </motion.div>
 
         <motion.div
-          className="absolute top-40 right-20 text-[#FDE8F0]"
+          className="absolute top-40 right-20 text-bg-soft-pink"
           style={{ y: cloudY2 }}>
           <motion.div
             animate={{
@@ -256,7 +297,7 @@ function HomePage() {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-40 left-20 text-[#FEF7E8]"
+          className="absolute bottom-40 left-20 text-bg-soft-yellow"
           style={{ y: cloudY3 }}>
           <motion.div
             animate={{
@@ -274,7 +315,7 @@ function HomePage() {
         </motion.div>
 
         <motion.div
-          className="absolute top-1/3 right-10 text-[#F3E8FD]"
+          className="absolute top-1/3 right-10 text-bg-soft-purple"
           style={{ y: cloudY4 }}>
           <motion.div
             animate={{
@@ -294,7 +335,7 @@ function HomePage() {
 
       {/* Navigation */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50 bg-[#FFFBF5]/90 backdrop-blur-sm"
+        className="fixed top-0 left-0 right-0 z-50 bg-bg-cream/90 backdrop-blur-sm"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}>
@@ -321,7 +362,7 @@ function HomePage() {
               <motion.a
                 key={item}
                 href={`/${item.toLowerCase()}`}
-                className="font-display font-medium text-[#636E72] hover:text-[#2D3436] transition-colors"
+                className="font-display font-medium text-text-muted hover:text-[#2D3436] transition-colors"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i + 0.3 }}
@@ -358,7 +399,7 @@ function HomePage() {
 
             {/* Drawer */}
             <motion.div
-              className="fixed top-0 right-0 bottom-0 w-[280px] bg-[#FFFBF5] z-50 md:hidden shadow-[-8px_0_30px_rgba(0,0,0,0.1)]"
+              className="fixed top-0 right-0 bottom-0 w-[280px] bg-bg-cream z-50 md:hidden shadow-[-8px_0_30px_rgba(0,0,0,0.1)]"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -397,7 +438,7 @@ function HomePage() {
               <div className="absolute bottom-0 left-0 right-0 p-4 border-t-[3px] border-[#2D3436]">
                 <a
                   href="/admin"
-                  className="flex items-center gap-2 font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors py-2"
+                  className="flex items-center gap-2 font-body text-sm text-text-muted hover:text-[#2D3436] transition-colors py-2"
                   onClick={() => setMobileMenuOpen(false)}>
                   <Feather className="w-4 h-4" />
                   Admin Access
@@ -423,7 +464,7 @@ function HomePage() {
                 <span className="relative inline-block">
                   <span className="relative z-10">Confess it.</span>
                   <motion.span
-                    className="absolute -bottom-2 left-0 w-full h-4 bg-[#FFD93D] -z-0 rounded-full"
+                    className="absolute -bottom-2 left-0 w-full h-4 bg-primary-yellow z-0 rounded-full"
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     transition={{ duration: 0.6, delay: 0.5 }}
@@ -443,7 +484,7 @@ function HomePage() {
                   </motion.span>{" "}
                   <span className="relative inline-block">
                     <motion.span
-                      className="inline-block text-[#4A90E2] drop-shadow-[4px_4px_0px_rgba(45,52,54,1)]"
+                      className="inline-block text-primary-blue drop-shadow-[4px_4px_0px_rgba(45,52,54,1)]"
                       animate={{
                         y: [0, -8, 0],
                         rotate: [0, -3, 3, 0],
@@ -476,7 +517,7 @@ function HomePage() {
 
             {/* Subtitle */}
             <motion.p
-              className="font-body text-lg md:text-xl text-[#636E72] max-w-xl mx-auto mb-12"
+              className="font-body text-lg md:text-xl text-text-muted max-w-xl mx-auto mb-12"
               initial={{ opacity: 0, y: 40 }}
               animate={mounted ? { opacity: 1, y: 0 } : {}}
               transition={{
@@ -520,7 +561,7 @@ function HomePage() {
                     onClick={() => setShowForm(true)}>
                     {/* Floating decorative bubbles */}
                     <motion.div
-                      className="absolute -left-8 top-8 w-6 h-6 rounded-full bg-[#FFD93D] border-[2px] border-[#2D3436]"
+                      className="absolute -left-8 top-8 w-6 h-6 rounded-full bg-primary-yellow border-2 border-[#2D3436]"
                       animate={{ y: [0, -10, 0], scale: [1, 1.1, 1] }}
                       transition={{
                         duration: 3,
@@ -529,7 +570,7 @@ function HomePage() {
                       }}
                     />
                     <motion.div
-                      className="absolute -right-6 top-16 w-4 h-4 rounded-full bg-[#FF7EB3] border-[2px] border-[#2D3436]"
+                      className="absolute -right-6 top-16 w-4 h-4 rounded-full bg-primary-pink border-2 border-[#2D3436]"
                       animate={{ y: [0, -8, 0], scale: [1, 1.2, 1] }}
                       transition={{
                         duration: 2.5,
@@ -539,7 +580,7 @@ function HomePage() {
                       }}
                     />
                     <motion.div
-                      className="absolute right-20 -top-4 w-8 h-8 rounded-full bg-[#4A90E2]/30"
+                      className="absolute right-20 -top-4 w-8 h-8 rounded-full bg-primary-blue/30"
                       animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
                       transition={{
                         duration: 4,
@@ -557,14 +598,14 @@ function HomePage() {
                         damping: 20,
                       }}>
                       {/* Main Bubble */}
-                      <div className="bg-white rounded-[40px] border-[4px] border-[#2D3436] shadow-[10px_10px_0px_#2D3436] p-6 md:p-8 cursor-pointer hover:shadow-[14px_14px_0px_#2D3436] hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
+                      <div className="bg-white rounded-[40px] border-4 border-[#2D3436] shadow-[10px_10px_0px_#2D3436] p-6 md:p-8 cursor-pointer hover:shadow-[14px_14px_0px_#2D3436] hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         {/* Shine effect */}
-                        <div className="absolute top-0 left-8 w-20 h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="absolute top-0 left-8 w-20 h-full bg-linear-to-r from-transparent via-white/50 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         <div className="flex items-start gap-5">
                           {/* Cartoon Avatar */}
                           <motion.div
-                            className="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#FFD93D] to-[#FFA502] border-[4px] border-[#2D3436] flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#2D3436]"
+                            className="relative w-16 h-16 rounded-full bg-linear-to-br from-primary-yellow to-[#FFA502] border-4 border-[#2D3436] flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#2D3436]"
                             animate={{
                               rotate: [0, 8, -8, 0],
                               y: [0, -3, 0],
@@ -584,7 +625,7 @@ function HomePage() {
 
                           {/* Input Area */}
                           <div className="flex-1 text-left pt-2">
-                            <p className="font-body text-[#B2BEC3] text-lg mb-4">
+                            <p className="font-body text-text-light text-lg mb-4">
                               Write your secret here...{" "}
                               <motion.span
                                 className="inline-block"
@@ -600,14 +641,14 @@ function HomePage() {
                             {/* Animated placeholder lines */}
                             <div className="space-y-3">
                               <motion.div
-                                className="h-3 bg-gradient-to-r from-[#DFE6E9] to-[#E8F4FD] rounded-full w-3/4 border-[1px] border-[#DFE6E9]"
+                                className="h-3 bg-linear-to-r from-border-playful to-bg-soft-blue rounded-full w-3/4 border border-border-playful"
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
                                 transition={{ duration: 0.8, delay: 0.5 }}
                                 style={{ originX: 0 }}
                               />
                               <motion.div
-                                className="h-3 bg-gradient-to-r from-[#DFE6E9] to-[#FDE8F0] rounded-full w-1/2 border-[1px] border-[#DFE6E9]"
+                                className="h-3 bg-linear-to-r from-border-playful to-bg-soft-pink rounded-full w-1/2 border border-border-playful"
                                 initial={{ scaleX: 0 }}
                                 animate={{ scaleX: 1 }}
                                 transition={{ duration: 0.8, delay: 0.7 }}
@@ -620,7 +661,7 @@ function HomePage() {
                         {/* Post It Button */}
                         <div className="flex justify-end mt-6">
                           <motion.button
-                            className="relative px-8 py-3 rounded-full font-display font-bold text-base bg-[#FF7EB3] text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] group-hover:shadow-[6px_6px_0px_#2D3436] group-hover:-translate-y-1 transition-all flex items-center gap-2 overflow-hidden"
+                            className="relative px-8 py-3 rounded-full font-display font-bold text-base bg-primary-pink text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] group-hover:shadow-[6px_6px_0px_#2D3436] group-hover:-translate-y-1 transition-all flex items-center gap-2 overflow-hidden"
                             whileHover={{ scale: 1.08 }}
                             whileTap={{ scale: 0.95 }}>
                             <span className="relative z-10">Post It!</span>
@@ -631,14 +672,14 @@ function HomePage() {
                               <Heart className="w-5 h-5 fill-white" />
                             </motion.div>
                             {/* Button shine */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                           </motion.button>
                         </div>
                       </div>
 
                       {/* Speech Bubble Tail - Cartoon style */}
-                      <div className="absolute -bottom-6 left-20 w-0 h-0 border-l-[24px] border-l-transparent border-r-[24px] border-r-transparent border-t-[24px] border-t-[#2D3436]"></div>
-                      <div className="absolute -bottom-[18px] left-[83px] w-0 h-0 border-l-[18px] border-l-transparent border-r-[18px] border-r-transparent border-t-[18px] border-t-white"></div>
+                      <div className="absolute -bottom-6 left-20 w-0 h-0 border-l-24 border-l-transparent border-r-24 border-r-transparent border-t-24 border-t-[#2D3436]"></div>
+                      <div className="absolute -bottom-[18px] left-[83px] w-0 h-0 border-l-18 border-l-transparent border-r-18 border-r-transparent border-t-18 border-t-white"></div>
 
                       {/* Small bubbles */}
                       <motion.div
@@ -652,7 +693,7 @@ function HomePage() {
                         }}
                       />
                       <motion.div
-                        className="absolute -bottom-12 left-36 w-3 h-3 rounded-full bg-white border-[2px] border-[#2D3436]"
+                        className="absolute -bottom-12 left-36 w-3 h-3 rounded-full bg-white border-2 border-[#2D3436]"
                         animate={{ y: [0, -3, 0], opacity: [1, 0.6, 1] }}
                         transition={{
                           duration: 2,
@@ -677,7 +718,7 @@ function HomePage() {
                         <h2 className="font-display text-3xl md:text-4xl font-bold text-[#2D3436] mb-3">
                           Your Thoughts. No Judgement
                         </h2>
-                        <p className="font-body text-[#636E72] max-w-md mx-auto">
+                        <p className="font-body text-text-muted max-w-md mx-auto">
                           Safe, secure, and absolutely adorable. Your secrets
                           are safe with us.
                         </p>
@@ -736,7 +777,7 @@ function HomePage() {
                     <section className="mt-16 md:mt-24 px-4">
                       <div className="max-w-3xl mx-auto">
                         <motion.div
-                          className="bg-gradient-to-r from-[#4A90E2]/10 to-[#9B59B6]/10 rounded-3xl border-[3px] border-[#4A90E2] p-6 md:p-8"
+                          className="bg-linear-to-r from-primary-blue/10 to-primary-purple/10 rounded-3xl border-[3px] border-primary-blue p-6 md:p-8"
                           style={{ boxShadow: "6px 6px 0px #4A90E2" }}
                           whileHover={{
                             y: -8,
@@ -749,7 +790,7 @@ function HomePage() {
                           }}>
                           <div className="flex flex-col sm:flex-row items-center gap-6">
                             <motion.div
-                              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-[#4A90E2] border-[3px] border-[#2D3436] flex items-center justify-center shadow-[4px_4px_0px_#2D3436]"
+                              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-primary-blue border-[3px] border-[#2D3436] flex items-center justify-center shadow-[4px_4px_0px_#2D3436]"
                               animate={{ rotate: [0, -5, 5, 0] }}
                               transition={{
                                 duration: 4,
@@ -763,7 +804,7 @@ function HomePage() {
                               <h3 className="font-display text-xl md:text-2xl font-bold text-[#2D3436]">
                                 Follow us on Threads!
                               </h3>
-                              <p className="font-body text-[#636E72] mt-2">
+                              <p className="font-body text-text-muted mt-2">
                                 See your confession posted anonymously. Join our
                                 growing community!
                               </p>
@@ -773,7 +814,7 @@ function HomePage() {
                               href="https://threads.net/@ceritaanon_"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="px-6 py-3 rounded-full font-display font-bold text-base bg-[#4A90E2] text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] flex items-center gap-2 whitespace-nowrap"
+                              className="px-6 py-3 rounded-full font-display font-bold text-base bg-primary-blue text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] flex items-center gap-2 whitespace-nowrap"
                               whileHover={{
                                 scale: 1.05,
                                 boxShadow: "6px 6px 0px #2D3436",
@@ -816,7 +857,7 @@ function HomePage() {
             {/* Logo */}
             <a
               href="/"
-              className="font-display font-bold text-lg text-[#2D3436] hover:text-[#4A90E2] transition-colors">
+              className="font-display font-bold text-lg text-[#2D3436] hover:text-primary-blue transition-colors">
               ceritaAnon
             </a>
 
@@ -824,31 +865,31 @@ function HomePage() {
             <nav className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-5 gap-y-1">
               <a
                 href="/about"
-                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                className="font-body text-sm text-text-muted hover:text-[#2D3436] transition-colors">
                 About
               </a>
               <a
                 href="/faq"
-                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                className="font-body text-sm text-text-muted hover:text-[#2D3436] transition-colors">
                 FAQ
               </a>
               <a
                 href="/privacy"
-                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                className="font-body text-sm text-text-muted hover:text-[#2D3436] transition-colors">
                 Privacy
               </a>
               <a
                 href="/admin"
-                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                className="font-body text-sm text-text-muted hover:text-[#2D3436] transition-colors">
                 Admin
               </a>
-              <span className="hidden sm:inline text-[#DFE6E9] mx-1">|</span>
+              <span className="hidden sm:inline text-border-playful mx-1">|</span>
               <span className="inline-flex items-center gap-3">
                 <a
                   href="https://threads.net/@ceritaanon_"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-body text-sm text-[#636E72] hover:text-[#4A90E2] transition-colors inline-flex items-center gap-1.5 group whitespace-nowrap">
+                  className="font-body text-sm text-text-muted hover:text-primary-blue transition-colors inline-flex items-center gap-1.5 group whitespace-nowrap">
                   <span className="opacity-70 group-hover:opacity-100 transition-opacity">
                     <ThreadsIcon size={14} />
                   </span>
@@ -858,7 +899,7 @@ function HomePage() {
                   href="https://www.buymeacoffee.com/ikhmalhanif"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-body text-sm text-[#636E72] hover:text-[#FF7EB3] transition-colors inline-flex items-center gap-1 whitespace-nowrap">
+                  className="font-body text-sm text-text-muted hover:text-primary-pink transition-colors inline-flex items-center gap-1 whitespace-nowrap">
                   <span>☕</span>
                   <span>Support</span>
                 </a>
@@ -866,13 +907,13 @@ function HomePage() {
             </nav>
 
             {/* Made with love */}
-            <span className="font-body text-xs text-[#B2BEC3]">
+            <span className="font-body text-xs text-text-light">
               Made with 💕
             </span>
           </motion.div>
 
           <motion.p
-            className="mt-4 pt-4 border-t border-[#DFE6E9] text-center font-body text-xs text-[#B2BEC3]"
+            className="mt-4 pt-4 border-t border-border-playful text-center font-body text-xs text-text-light"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -891,7 +932,7 @@ function HomePage() {
             exit={{ scale: 0, rotate: 180 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             onClick={() => setShowForm(true)}
-            className="fixed bottom-6 right-6 w-14 h-14 bg-[#FF7EB3] text-white rounded-full border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] flex items-center justify-center hover:shadow-[6px_6px_0px_#2D3436] hover:-translate-y-1 transition-all active:shadow-[2px_2px_0px_#2D3436] active:translate-y-0 z-40 md:hidden"
+            className="fixed bottom-6 right-6 w-14 h-14 bg-primary-pink text-white rounded-full border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] flex items-center justify-center hover:shadow-[6px_6px_0px_#2D3436] hover:-translate-y-1 transition-all active:shadow-[2px_2px_0px_#2D3436] active:translate-y-0 z-40 md:hidden"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}>
             <Feather className="w-6 h-6" />
