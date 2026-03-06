@@ -3,7 +3,12 @@ import { ApiError } from '../middleware/error-handler';
 import { addCorsHeaders } from '../middleware/cors';
 import { requireTurnstile } from '../middleware/turnstile';
 import { requireRateLimit } from '../middleware/rate-limit';
-import { requireCleanContent, sanitizeContent, ContentFilterResult } from '../middleware/content-filter';
+import {
+  requireCleanContent,
+  sanitizeContent,
+  ContentFilterResult,
+  moderateForAutoPost,
+} from '../middleware/content-filter';
 import { verifyAdminAuth } from '../middleware/admin-auth';
 import { postToThreads, ThreadsCredentials } from '../services/threads-api';
 import type { Confession, ConfessionStatus } from '../../../shared/types';
@@ -111,11 +116,70 @@ async function submitConfession(request: Request, env: Env): Promise<Response> {
     throw filterError;
   }
 
+  // Auto-post moderation: decide if it's safe to auto-post this confession to Threads.
+  const autoPostModeration = moderateForAutoPost(combinedContent);
+  const threadCount = postContents.length;
+
+  // If Threads is configured and the content is safe for auto-post,
+  // try to post directly to Threads without storing the confession.
+  if (
+    env.THREADS_ACCESS_TOKEN &&
+    env.THREADS_USER_ID &&
+    autoPostModeration.isSafeForAutoPost
+  ) {
+    try {
+      const credentials: ThreadsCredentials = {
+        accessToken: env.THREADS_ACCESS_TOKEN,
+        userId: env.THREADS_USER_ID,
+      };
+
+      const postResult = await postToThreads(sanitizedContents, credentials);
+
+      if (postResult.success) {
+        // Best-effort: update stats to count auto-posted confessions
+        try {
+          await env.DB.prepare(
+            `INSERT OR IGNORE INTO stats (id, posted_count, rejected_count, total_submitted) VALUES (1, 0, 0, 0)`
+          ).run();
+          await env.DB.prepare(
+            `UPDATE stats SET posted_count = posted_count + 1, updated_at = CURRENT_TIMESTAMP WHERE id = 1`
+          ).run();
+        } catch (statsError) {
+          console.error('Failed to update posted stats for auto-posted confession:', statsError);
+        }
+
+        return addCorsHeaders(
+          new Response(
+            JSON.stringify({
+              success: true,
+              data: {
+                status: 'posted' as ConfessionStatus,
+                threadCount,
+                autoPosted: true,
+                permalink: postResult.permalink,
+                message:
+                  `Your confession${threadCount > 1 ? ` (${threadCount} posts)` : ''} ` +
+                  'was posted to Threads.',
+                needsReview: false,
+                moderationFlags: [],
+              },
+            }),
+            { status: 201, headers: { 'Content-Type': 'application/json' } }
+          )
+        );
+      } else {
+        console.error('Auto-post to Threads failed at submission time:', postResult.error);
+      }
+    } catch (threadsError) {
+      console.error('Error while auto-posting to Threads at submission time:', threadsError);
+    }
+    // If auto-post fails for any reason, fall through to DB storage and manual review.
+  }
+
+  // For anything that cannot be auto-posted immediately (missing credentials,
+  // auto-post moderation flags, or Threads errors), store the confession in the DB
+  // for manual review in the admin dashboard.
   try {
-    // Store as thread indicator if multiple posts
-    const threadCount = postContents.length;
-    
-    // All confessions start as pending for manual review
     const result = await env.DB.prepare(
       `INSERT INTO confessions (content, ip_hash, turnstile_token, status)
        VALUES (?, ?, ?, ?)
@@ -128,18 +192,49 @@ async function submitConfession(request: Request, env: Env): Promise<Response> {
       throw new ApiError('Failed to create confession', 500);
     }
 
+    const needsReview = !autoPostModeration.isSafeForAutoPost;
+
+    // Build a human-readable moderation reason when we decide not to auto-post.
+    let moderationReason: string | undefined;
+    const reasonParts: string[] = [];
+
+    if (autoPostModeration.categories.selfHarm) {
+      reasonParts.push('it talks about self-harm or wanting to hurt yourself');
+    }
+    if (autoPostModeration.categories.sexualContent) {
+      reasonParts.push('it includes sensitive sexual content');
+    }
+    if (autoPostModeration.categories.pii) {
+      reasonParts.push('it appears to contain personal contact or identifying information');
+    }
+    if (autoPostModeration.categories.profanity) {
+      reasonParts.push('it includes strong language');
+    }
+
+    if (reasonParts.length > 0) {
+      moderationReason =
+        'We need to review this confession manually because ' +
+        reasonParts.join('; ') +
+        '.';
+    }
+
     return addCorsHeaders(
       new Response(
         JSON.stringify({
           success: true,
           data: {
             id: result.id,
-            status: 'pending',
-            threadCount: threadCount,
-            message: filterResult.flagged 
-              ? `Confession${threadCount > 1 ? ` (${threadCount} posts)` : ''} submitted and is awaiting manual review.`
+            status: 'pending' as ConfessionStatus,
+            threadCount,
+            message: needsReview
+              ? `Your confession${threadCount > 1 ? ` (${threadCount} posts)` : ''} was received and needs manual review before it can be posted.`
               : `Confession${threadCount > 1 ? ` (${threadCount} posts)` : ''} submitted successfully and is awaiting review.`,
+            // Existing spam/suspicious flag from the base content filter
             flagged: filterResult.flagged,
+            // New moderation metadata for auto-post gating
+            needsReview,
+            moderationFlags: needsReview ? autoPostModeration.flags : [],
+            moderationReason,
           },
         }),
         { status: 201, headers: { 'Content-Type': 'application/json' } }
@@ -194,12 +289,47 @@ async function getPendingConfessions(request: Request, env: Env): Promise<Respon
     const total = countResult?.total || 0;
     const hasMore = validatedOffset + (confessions.results?.length || 0) < total;
 
+    // Enhance each confession with a short moderation summary based on
+    // the same auto-post moderation rules used at submission time.
+    const enhancedConfessions =
+      confessions.results?.map((confession) => {
+        const moderation = moderateForAutoPost(confession.content);
+
+        if (!moderation.flags.length) {
+          return confession;
+        }
+
+        const labels: string[] = [];
+        if (moderation.categories.selfHarm) {
+          labels.push('self-harm');
+        }
+        if (moderation.categories.sexualContent) {
+          labels.push('sexual content');
+        }
+        if (moderation.categories.pii) {
+          labels.push('PII');
+        }
+        if (moderation.categories.profanity) {
+          labels.push('language');
+        }
+
+        const moderationSummary = labels.length
+          ? `Flagged: ${labels.join(', ')}`
+          : undefined;
+
+        return {
+          ...confession,
+          moderationFlags: moderation.flags,
+          moderationSummary,
+        };
+      }) || [];
+
     return addCorsHeaders(
       new Response(
         JSON.stringify({
           success: true,
           data: {
-            confessions: confessions.results || [],
+            confessions: enhancedConfessions,
             total,
             hasMore,
           },
@@ -351,10 +481,10 @@ async function rejectConfession(request: Request, env: Env, id: number): Promise
   try {
     // Check if confession exists and is pending
     const confession = await env.DB.prepare(
-      `SELECT id, status FROM confessions WHERE id = ?`
+      `SELECT id, content, status FROM confessions WHERE id = ?`
     )
       .bind(id)
-      .first<{ id: number; status: ConfessionStatus }>();
+      .first<{ id: number; content: string; status: ConfessionStatus }>();
 
     if (!confession) {
       throw new ApiError('Confession not found', 404);
@@ -362,6 +492,31 @@ async function rejectConfession(request: Request, env: Env, id: number): Promise
 
     if (confession.status !== 'pending') {
       throw new ApiError(`Confession is already ${confession.status}`, 400);
+    }
+
+    // If no explicit reason was provided, derive one from moderation signals.
+    if (!reason) {
+      const moderation = moderateForAutoPost(confession.content);
+      const parts: string[] = [];
+
+      if (moderation.categories.selfHarm) {
+        parts.push('contains self-harm related content');
+      }
+      if (moderation.categories.sexualContent) {
+        parts.push('contains sensitive sexual content');
+      }
+      if (moderation.categories.pii) {
+        parts.push('appears to contain personal or contact information');
+      }
+      if (moderation.categories.profanity) {
+        parts.push('contains strong or inappropriate language');
+      }
+
+      if (parts.length > 0) {
+        reason = `Auto-moderation: ${parts.join('; ')}.`;
+      } else {
+        reason = 'Rejected by admin.';
+      }
     }
 
     // Update stats - increment rejected count (ensure stats row exists first)
@@ -392,6 +547,7 @@ async function rejectConfession(request: Request, env: Env, id: number): Promise
             id,
             status: 'rejected',
             action: 'rejected',
+            rejectionReason: reason,
             deleted: true,
             timestamp: new Date().toISOString(),
           },

@@ -340,6 +340,11 @@ function ConfessionCard({
               <Hash className="w-3 h-3" />
               {confession.id}
             </span>
+            {confession.moderationSummary && (
+              <span className="font-body text-[10px] text-[#FF6B6B] bg-[#FFEBEE] px-2 py-0.5 rounded-full border border-[#FF6B6B]">
+                {confession.moderationSummary}
+              </span>
+            )}
           </div>
           <span className="font-body text-xs text-[#636E72] flex items-center gap-1">
             <Clock className="w-3 h-3" />
@@ -657,12 +662,15 @@ export default function AdminPage() {
       const response = await confessionApi.reject(id);
 
       if (response.success) {
+        const rejectionReason = response.data?.rejectionReason;
         toast({
           title: 'Rejected',
-          description: `Confession #${id} has been rejected`,
+          description: rejectionReason
+            ? `Confession #${id} has been rejected. Reason: ${rejectionReason}`
+            : `Confession #${id} has been rejected`,
           variant: 'default',
         });
-        addActivity('rejected', id);
+        addActivity('rejected', id, rejectionReason || undefined);
         
         setConfessions(prev => prev.filter(c => c.id !== id));
         setTotal(prev => prev - 1);
@@ -1158,7 +1166,7 @@ export default function AdminPage() {
                           )}
                           animate={{ scale: [1, 1.2, 1] }}
                           transition={{ duration: 1, repeat: Infinity }} />
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <p className="font-body text-[#636E72]">
                             <span className="text-[#2D3436] font-semibold">
                               #{activity.confessionId}
@@ -1168,6 +1176,11 @@ export default function AdminPage() {
                           <p className="font-body text-[#B2BEC3] text-xs">
                             {new Date(activity.timestamp).toLocaleTimeString()}
                           </p>
+                          {activity.details && (
+                            <p className="font-body text-xs text-[#636E72] mt-1.5 leading-snug">
+                              {activity.details}
+                            </p>
+                          )}
                         </div>
                       </motion.div>
                     ))}

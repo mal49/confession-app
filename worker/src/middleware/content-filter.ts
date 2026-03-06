@@ -45,11 +45,71 @@ const SUSPICIOUS_PATTERNS = [
   /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/,  // Email addresses
 ];
 
+// Very lightweight keyword lists for higher-risk categories.
+// These are intentionally conservative and can be expanded over time.
+const SELF_HARM_KEYWORDS = [
+  'kill myself',
+  'killing myself',
+  'end my life',
+  'end it all',
+  'suicidal',
+  'suicide',
+  'want to die',
+  'wanna die',
+  'hurt myself',
+  'self harm',
+  'self-harm',
+];
+
+const SEXUAL_CONTENT_KEYWORDS = [
+  'sex',
+  'nude',
+  'nudes',
+  'naked',
+  'onlyfans',
+  'porn',
+  'pornhub',
+  'xvideos',
+  'deepthroat',
+  'handjob',
+  'blowjob',
+  'doggy style',
+  '69',
+  'anal',
+  'bdsm',
+];
+
+// Basic PII detection for auto-post gating (email + phone).
+// These are intentionally simple and may have false positives/negatives.
+const PII_PATTERNS = [
+  // Email
+  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/,
+  // Phone numbers like +123..., (123) 456-7890, 123-456-7890, etc.
+  /\b(?:\+?\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d{3,4}[\s.-]?\d{3,4}\b/,
+];
+
 export interface ContentFilterResult {
   clean: boolean;
   flagged: boolean;
   reason?: string;
   category: 'clean' | 'spam' | 'profanity' | 'suspicious' | 'blocked';
+}
+
+export type AutoPostModerationFlag =
+  | 'self_harm'
+  | 'profanity'
+  | 'pii'
+  | 'sexual_content';
+
+export interface AutoPostModerationResult {
+  isSafeForAutoPost: boolean;
+  flags: AutoPostModerationFlag[];
+  categories: {
+    selfHarm: boolean;
+    profanity: boolean;
+    pii: boolean;
+    sexualContent: boolean;
+  };
 }
 
 /**
@@ -214,4 +274,59 @@ export function sanitizeContent(content: string): string {
     // Remove control characters except newlines
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
     .trim();
+}
+
+/**
+ * Lightweight moderation specifically for deciding if content
+ * is safe to auto-post to Threads.
+ *
+ * It focuses on:
+ * - Self-harm language
+ * - Profanity / blocked words
+ * - PII (emails / phone numbers)
+ * - Sexual / NSFW content
+ */
+export function moderateForAutoPost(content: string): AutoPostModerationResult {
+  const lower = content.toLowerCase();
+
+  const flags: AutoPostModerationFlag[] = [];
+  const categories = {
+    selfHarm: false,
+    profanity: false,
+    pii: false,
+    sexualContent: false,
+  };
+
+  // Self-harm detection (keyword based)
+  if (SELF_HARM_KEYWORDS.some(keyword => lower.includes(keyword))) {
+    categories.selfHarm = true;
+    flags.push('self_harm');
+  }
+
+  // Sexual content detection (keyword based, intentionally conservative)
+  if (SEXUAL_CONTENT_KEYWORDS.some(keyword => lower.includes(keyword))) {
+    categories.sexualContent = true;
+    flags.push('sexual_content');
+  }
+
+  // PII detection (email / phone)
+  if (PII_PATTERNS.some(pattern => pattern.test(content))) {
+    categories.pii = true;
+    flags.push('pii');
+  }
+
+  // Reuse existing filter to detect profanity / blocked words.
+  const baseFilter = filterContent(content);
+  if (baseFilter.category === 'profanity' || baseFilter.category === 'blocked') {
+    categories.profanity = true;
+    if (!flags.includes('profanity')) {
+      flags.push('profanity');
+    }
+  }
+
+  return {
+    isSafeForAutoPost: flags.length === 0,
+    flags,
+    categories,
+  };
 }

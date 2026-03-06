@@ -20,6 +20,9 @@ export interface Confession {
   posted_at?: string;
   posted_by?: string;
   rejection_reason?: string;
+  // Optional moderation metadata for pending items
+  moderationFlags?: string[];
+  moderationSummary?: string;
 }
 
 // For creating a new confession (request)
@@ -38,9 +41,22 @@ export interface ApiResponse<T = unknown> {
 
 // Confession submission response
 export interface ConfessionSubmitResponse {
-  id: number;
+  // Present when the confession is stored in the DB (pending / needs review)
+  id?: number;
   status: ConfessionStatus;
   message: string;
+  // Number of posts in the submitted thread (for multi-part confessions)
+  threadCount?: number;
+  // True when server-side filters flagged the confession for manual review
+  needsReview?: boolean;
+  // True when the confession was auto-posted directly to Threads
+  autoPosted?: boolean;
+  // Threads permalink when auto-posted
+  permalink?: string;
+  // Optional machine-readable moderation flags for why review is needed
+  moderationFlags?: string[];
+  // Human-readable explanation for moderation / review
+  moderationReason?: string;
 }
 
 // Pending confessions list response
@@ -67,6 +83,8 @@ export interface ModerationActionResponse {
   permalink?: string;
   postError?: string;
   threadCount?: number; // Number of posts in the thread (if content was long)
+  // Reason provided when a confession is rejected (auto-generated or admin-supplied)
+  rejectionReason?: string;
 }
 
 // Admin stats response
