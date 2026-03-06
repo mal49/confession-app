@@ -15,8 +15,8 @@ const BLOCKED_PATTERNS = [
   // Common spam patterns
   /\b(viagra|cialis|casino|lottery|winner\s+\$\d+)\b/gi,
   
-  // Excessive repetition (more than 5 identical consecutive characters)
-  /(.)\1{5,}/,
+  // Excessive repetition (more than 15 identical consecutive characters - allows expressive text)
+  /(.)\1{15,}/,
   
   // All caps shouting (more than 80% caps in long words)
   /\b[A-Z]{10,}\b/,

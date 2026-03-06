@@ -11,6 +11,7 @@ import { useToastContext } from "@/hooks/use-toast";
 import { confessionApi } from "@/api/client";
 
 import { Heart, Feather, Cloud, Menu, X } from "lucide-react";
+import { ThreadsIcon } from "@/components/ui-custom/threads-icon";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Shield02Icon,
@@ -175,9 +176,20 @@ function HomePage() {
 
       if (response.success) {
         toast({
-          title: "Confession Submitted! 🎉",
-          description:
-            response.data?.message || "Your confession is awaiting review.",
+          title: "Confession Submitted!",
+          description: (
+            <a
+              href="https://threads.net/@ceritaanon_"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[#2D3436] hover:text-[#4A90E2] transition-colors leading-tight"
+            >
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-black shrink-0">
+                <img src="/threads-app-icon.svg" alt="" className="w-3.5 h-3.5" />
+              </span>
+              <span className="hover:underline">Follow @ceritaanon_ to see it posted</span>
+            </a>
+          ),
           variant: "success",
         });
         setShowForm(false);
@@ -507,22 +519,35 @@ function HomePage() {
                     }}
                     onClick={() => setShowForm(true)}>
                     {/* Floating decorative bubbles */}
-                    <motion.div 
+                    <motion.div
                       className="absolute -left-8 top-8 w-6 h-6 rounded-full bg-[#FFD93D] border-[2px] border-[#2D3436]"
                       animate={{ y: [0, -10, 0], scale: [1, 1.1, 1] }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                     />
-                    <motion.div 
+                    <motion.div
                       className="absolute -right-6 top-16 w-4 h-4 rounded-full bg-[#FF7EB3] border-[2px] border-[#2D3436]"
                       animate={{ y: [0, -8, 0], scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                      transition={{
+                        duration: 2.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.5,
+                      }}
                     />
-                    <motion.div 
+                    <motion.div
                       className="absolute right-20 -top-4 w-8 h-8 rounded-full bg-[#4A90E2]/30"
                       animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                     />
-                    
+
                     <motion.div
                       className="relative"
                       whileHover={{ scale: 1.02, rotate: [0, -1, 1, 0] }}
@@ -535,12 +560,12 @@ function HomePage() {
                       <div className="bg-white rounded-[40px] border-[4px] border-[#2D3436] shadow-[10px_10px_0px_#2D3436] p-6 md:p-8 cursor-pointer hover:shadow-[14px_14px_0px_#2D3436] hover:-translate-y-2 transition-all duration-300 group relative overflow-hidden">
                         {/* Shine effect */}
                         <div className="absolute top-0 left-8 w-20 h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        
+
                         <div className="flex items-start gap-5">
                           {/* Cartoon Avatar */}
                           <motion.div
                             className="relative w-16 h-16 rounded-full bg-gradient-to-br from-[#FFD93D] to-[#FFA502] border-[4px] border-[#2D3436] flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#2D3436]"
-                            animate={{ 
+                            animate={{
                               rotate: [0, 8, -8, 0],
                               y: [0, -3, 0],
                             }}
@@ -549,7 +574,9 @@ function HomePage() {
                               repeat: Infinity,
                               ease: "easeInOut",
                             }}>
-                            <span className="font-display font-bold text-2xl text-[#2D3436]">?</span>
+                            <span className="font-display font-bold text-2xl text-[#2D3436]">
+                              ?
+                            </span>
                             {/* Eyes */}
                             <div className="absolute top-4 left-3 w-1.5 h-1.5 bg-[#2D3436] rounded-full" />
                             <div className="absolute top-4 right-3 w-1.5 h-1.5 bg-[#2D3436] rounded-full" />
@@ -562,7 +589,10 @@ function HomePage() {
                               <motion.span
                                 className="inline-block"
                                 animate={{ opacity: [1, 0.3, 1] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}>
+                                transition={{
+                                  duration: 1.5,
+                                  repeat: Infinity,
+                                }}>
                                 |
                               </motion.span>
                             </p>
@@ -609,17 +639,27 @@ function HomePage() {
                       {/* Speech Bubble Tail - Cartoon style */}
                       <div className="absolute -bottom-6 left-20 w-0 h-0 border-l-[24px] border-l-transparent border-r-[24px] border-r-transparent border-t-[24px] border-t-[#2D3436]"></div>
                       <div className="absolute -bottom-[18px] left-[83px] w-0 h-0 border-l-[18px] border-l-transparent border-r-[18px] border-r-transparent border-t-[18px] border-t-white"></div>
-                      
+
                       {/* Small bubbles */}
-                      <motion.div 
+                      <motion.div
                         className="absolute -bottom-10 left-28 w-4 h-4 rounded-full bg-white border-[3px] border-[#2D3436]"
                         animate={{ y: [0, -5, 0], opacity: [1, 0.7, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 0.3,
+                        }}
                       />
-                      <motion.div 
+                      <motion.div
                         className="absolute -bottom-12 left-36 w-3 h-3 rounded-full bg-white border-[2px] border-[#2D3436]"
                         animate={{ y: [0, -3, 0], opacity: [1, 0.6, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 0.6,
+                        }}
                       />
                     </motion.div>
                   </motion.div>
@@ -690,6 +730,73 @@ function HomePage() {
                       </div>
                     </div>
                   </ScrollReveal>
+
+                  {/* Threads CTA Banner */}
+                  <ScrollReveal delay={0.4}>
+                    <section className="mt-16 md:mt-24 px-4">
+                      <div className="max-w-3xl mx-auto">
+                        <motion.div
+                          className="bg-gradient-to-r from-[#4A90E2]/10 to-[#9B59B6]/10 rounded-3xl border-[3px] border-[#4A90E2] p-6 md:p-8"
+                          style={{ boxShadow: "6px 6px 0px #4A90E2" }}
+                          whileHover={{
+                            y: -8,
+                            boxShadow: "10px 10px 0px #4A90E2",
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 25,
+                          }}>
+                          <div className="flex flex-col sm:flex-row items-center gap-6">
+                            <motion.div
+                              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-[#4A90E2] border-[3px] border-[#2D3436] flex items-center justify-center shadow-[4px_4px_0px_#2D3436]"
+                              animate={{ rotate: [0, -5, 5, 0] }}
+                              transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                              }}>
+                              <ThreadsIcon size={40} className="text-white" />
+                            </motion.div>
+
+                            <div className="flex-1 text-center sm:text-left">
+                              <h3 className="font-display text-xl md:text-2xl font-bold text-[#2D3436]">
+                                Follow us on Threads!
+                              </h3>
+                              <p className="font-body text-[#636E72] mt-2">
+                                See your confession posted anonymously. Join our
+                                growing community!
+                              </p>
+                            </div>
+
+                            <motion.a
+                              href="https://threads.net/@ceritaanon_"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-6 py-3 rounded-full font-display font-bold text-base bg-[#4A90E2] text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] flex items-center gap-2 whitespace-nowrap"
+                              whileHover={{
+                                scale: 1.05,
+                                boxShadow: "6px 6px 0px #2D3436",
+                                y: -2,
+                              }}
+                              whileTap={{
+                                scale: 0.98,
+                                boxShadow: "2px 2px 0px #2D3436",
+                                y: 0,
+                              }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 400,
+                                damping: 25,
+                              }}>
+                              <ThreadsIcon size={20} className="text-white" />
+                              Follow @ceritaanon
+                            </motion.a>
+                          </div>
+                        </motion.div>
+                      </div>
+                    </section>
+                  </ScrollReveal>
                 </>
               )}
             </AnimatePresence>
@@ -698,23 +805,23 @@ function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t-[3px] border-[#2D3436] py-8 relative z-10">
+      <footer className="bg-white border-t-[3px] border-[#2D3436] py-6 relative z-10">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
-            className="flex flex-col md:flex-row items-center justify-between gap-4"
-            initial={{ opacity: 0, y: 30 }}
+            className="flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}>
+            transition={{ duration: 0.5 }}>
             {/* Logo */}
             <a
               href="/"
-              className="font-display font-bold text-xl text-[#2D3436]">
+              className="font-display font-bold text-lg text-[#2D3436] hover:text-[#4A90E2] transition-colors">
               ceritaAnon
             </a>
 
-            {/* Links */}
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:gap-6">
+            {/* Navigation Links */}
+            <nav className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-5 gap-y-1">
               <a
                 href="/about"
                 className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
@@ -735,30 +842,43 @@ function HomePage() {
                 className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
                 Admin
               </a>
-              <a
-                href="https://www.buymeacoffee.com/ikhmalhanif"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors flex items-center gap-1">
-                <span>☕</span> Buy me a coffee
-              </a>
-              <span className="font-body text-sm text-[#B2BEC3]">
-                Made with 💕
+              <span className="hidden sm:inline text-[#DFE6E9] mx-1">|</span>
+              <span className="inline-flex items-center gap-3">
+                <a
+                  href="https://threads.net/@ceritaanon_"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-body text-sm text-[#636E72] hover:text-[#4A90E2] transition-colors inline-flex items-center gap-1.5 group whitespace-nowrap">
+                  <span className="opacity-70 group-hover:opacity-100 transition-opacity">
+                    <ThreadsIcon size={14} />
+                  </span>
+                  <span>Threads</span>
+                </a>
+                <a
+                  href="https://www.buymeacoffee.com/ikhmalhanif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-body text-sm text-[#636E72] hover:text-[#FF7EB3] transition-colors inline-flex items-center gap-1 whitespace-nowrap">
+                  <span>☕</span>
+                  <span>Support</span>
+                </a>
               </span>
-            </div>
+            </nav>
+
+            {/* Made with love */}
+            <span className="font-body text-xs text-[#B2BEC3]">
+              Made with 💕
+            </span>
           </motion.div>
 
-          <motion.div
-            className="mt-6 pt-6 border-t border-[#DFE6E9] text-center"
+          <motion.p
+            className="mt-4 pt-4 border-t border-[#DFE6E9] text-center font-body text-xs text-[#B2BEC3]"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}>
-            <p className="font-body text-xs text-[#B2BEC3]">
-              A safe space for the unspoken. Built with care and lots of
-              doodles.
-            </p>
-          </motion.div>
+            A safe space for the unspoken. Built with care and lots of doodles.
+          </motion.p>
         </div>
       </footer>
 

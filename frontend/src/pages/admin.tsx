@@ -3,6 +3,7 @@ import { confessionApi, adminApi } from '@/api/client';
 import { useToastContext } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import type { Confession, AdminStatsResponse } from '@/../../shared/types';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Inbox,
@@ -23,9 +24,12 @@ import {
   Activity,
   Zap,
   BarChart3,
-  Cloud,
+  ArrowLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AnimatedClouds } from '@/components/ui-custom/animated-clouds';
+import { ScrollReveal } from '@/components/ui-custom/scroll-reveal';
+import { ThreadsIcon } from '@/components/ui-custom/threads-icon';
 
 // ============================================================================
 // TYPES
@@ -60,100 +64,121 @@ function LoginForm({ onLogin, isLoading, error }: LoginFormProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#FFFBF5] relative overflow-hidden">
-      {/* Decorative Clouds */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 text-[#E8F4FD] animate-float">
-          <Cloud className="w-24 h-24" strokeWidth={1.5} />
-        </div>
-        <div className="absolute top-40 right-20 text-[#FDE8F0] animate-float-delayed">
-          <Cloud className="w-32 h-32" strokeWidth={1.5} />
-        </div>
-        <div className="absolute bottom-40 left-20 text-[#FEF7E8] animate-float">
-          <Cloud className="w-20 h-20" strokeWidth={1.5} />
-        </div>
-      </div>
+      {/* Animated Decorative Clouds */}
+      <AnimatedClouds />
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-full bg-[#FFD93D] border-[3px] border-[#2D3436] flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_#2D3436]">
-            <Shield className="w-10 h-10 text-[#2D3436]" />
+        <ScrollReveal>
+          <div className="text-center mb-8">
+            <motion.div
+              className="w-20 h-20 rounded-full bg-[#FFD93D] border-[3px] border-[#2D3436] flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_#2D3436]"
+              animate={{ rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
+              <Shield className="w-10 h-10 text-[#2D3436]" />
+            </motion.div>
+            <h1 className="font-display text-3xl font-bold text-[#2D3436] mb-2">
+              Admin Portal
+            </h1>
+            <p className="font-body text-[#636E72]">
+              Secure access to moderation panel
+            </p>
           </div>
-          <h1 className="font-display text-3xl font-bold text-[#2D3436] mb-2">
-            Admin Portal
-          </h1>
-          <p className="font-body text-[#636E72]">
-            Secure access to moderation panel
-          </p>
-        </div>
+        </ScrollReveal>
 
         {/* Login Card */}
-        <div className="bg-white rounded-[32px] border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block font-display font-semibold text-[#2D3436] mb-2">
-                API Key
-              </label>
-              <div className="relative">
-                <input
-                  type={showKey ? 'text' : 'password'}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="Enter your admin API key"
-                  className="w-full px-4 py-3 rounded-2xl font-body text-[#2D3436] bg-[#FFFBF5] border-[3px] border-[#2D3436] shadow-[3px_3px_0px_#2D3436] outline-none focus:shadow-[5px_5px_0px_#2D3436] focus:-translate-y-0.5 transition-all placeholder:text-[#B2BEC3]"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowKey(!showKey)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 font-body text-sm text-[#636E72] hover:text-[#2D3436]"
-                >
-                  {showKey ? 'Hide' : 'Show'}
-                </button>
+        <ScrollReveal delay={0.1}>
+          <motion.div
+            className="bg-white rounded-[32px] border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] p-8"
+            whileHover={{
+              y: -4,
+              boxShadow: "10px 10px 0px #2D3436",
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block font-display font-semibold text-[#2D3436] mb-2">
+                  API Key
+                </label>
+                <div className="relative">
+                  <input
+                    type={showKey ? 'text' : 'password'}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder="Enter your admin API key"
+                    className="w-full px-4 py-3 rounded-2xl font-body text-[#2D3436] bg-[#FFFBF5] border-[3px] border-[#2D3436] shadow-[3px_3px_0px_#2D3436] outline-none focus:shadow-[5px_5px_0px_#2D3436] focus:-translate-y-0.5 transition-all placeholder:text-[#B2BEC3]"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowKey(!showKey)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors"
+                  >
+                    {showKey ? 'Hide' : 'Show'}
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <div className="flex items-center gap-2 p-4 rounded-xl bg-[#FF6B6B]/10 border-[2px] border-[#FF6B6B] text-[#FF6B6B] font-body text-sm">
-                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading || !apiKey.trim()}
-              className="w-full h-12 rounded-full font-display font-bold text-base bg-[#FF7EB3] text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] hover:shadow-[6px_6px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[2px_2px_0px_#2D3436] active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                <>
-                  <Shield className="w-5 h-5" />
-                  Access Dashboard
-                </>
+              {error && (
+                <motion.div
+                  className="flex items-center gap-2 p-4 rounded-xl bg-[#FF6B6B]/10 border-[2px] border-[#FF6B6B] text-[#FF6B6B] font-body text-sm"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}>
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  {error}
+                </motion.div>
               )}
-            </button>
-          </form>
 
-          <div className="mt-6 pt-6 border-t-[2px] border-dashed border-[#DFE6E9] text-center">
-            <button
-              onClick={() => window.location.href = '/'}
-              className="font-body text-[#636E72] hover:text-[#2D3436] text-sm transition-colors flex items-center justify-center gap-1"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Back to Website
-            </button>
-          </div>
-        </div>
+              <motion.button
+                type="submit"
+                disabled={isLoading || !apiKey.trim()}
+                className="w-full h-12 rounded-full font-display font-bold text-base bg-[#FF7EB3] text-white border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: "6px 6px 0px #2D3436",
+                  y: -2,
+                }}
+                whileTap={{
+                  scale: 0.98,
+                  boxShadow: "2px 2px 0px #2D3436",
+                  y: 0,
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    <Shield className="w-5 h-5" />
+                    Access Dashboard
+                  </>
+                )}
+              </motion.button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t-[2px] border-dashed border-[#DFE6E9] text-center">
+              <motion.a
+                href="/"
+                className="font-body text-[#636E72] hover:text-[#2D3436] text-sm transition-colors flex items-center justify-center gap-1"
+                whileHover={{ x: -2 }}>
+                <ArrowLeft className="w-4 h-4" />
+                Back to Website
+              </motion.a>
+            </div>
+          </motion.div>
+        </ScrollReveal>
 
         {/* Security Note */}
-        <p className="text-center font-body text-[#B2BEC3] text-xs mt-6">
+        <motion.p
+          className="text-center font-body text-[#B2BEC3] text-xs mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}>
           Secure connection • End-to-end encrypted
-        </p>
+        </motion.p>
       </div>
     </div>
   );
@@ -173,11 +198,11 @@ interface StatCardProps {
 }
 
 const colorVariants = {
-  yellow: { bg: 'bg-[#FFD93D]', text: 'text-[#2D3436]', border: 'border-[#2D3436]' },
-  green: { bg: 'bg-[#1DD1A1]', text: 'text-white', border: 'border-[#2D3436]' },
-  red: { bg: 'bg-[#FF6B6B]', text: 'text-white', border: 'border-[#2D3436]' },
-  blue: { bg: 'bg-[#4A90E2]', text: 'text-white', border: 'border-[#2D3436]' },
-  pink: { bg: 'bg-[#FF7EB3]', text: 'text-white', border: 'border-[#2D3436]' },
+  yellow: { bg: 'bg-[#FFD93D]', text: 'text-[#2D3436]', border: 'border-[#2D3436]', hex: '#FFD93D' },
+  green: { bg: 'bg-[#1DD1A1]', text: 'text-white', border: 'border-[#2D3436]', hex: '#1DD1A1' },
+  red: { bg: 'bg-[#FF6B6B]', text: 'text-white', border: 'border-[#2D3436]', hex: '#FF6B6B' },
+  blue: { bg: 'bg-[#4A90E2]', text: 'text-white', border: 'border-[#2D3436]', hex: '#4A90E2' },
+  pink: { bg: 'bg-[#FF7EB3]', text: 'text-white', border: 'border-[#2D3436]', hex: '#FF7EB3' },
 };
 
 function StatCard({ title, value, icon, trend, color, delay = 0 }: StatCardProps) {
@@ -190,34 +215,48 @@ function StatCard({ title, value, icon, trend, color, delay = 0 }: StatCardProps
   }, [delay]);
 
   return (
-    <div 
+    <motion.div
       className={cn(
-        "relative overflow-hidden rounded-3xl border-[3px] bg-white p-6 transition-all duration-500 hover:-translate-y-1",
+        "relative overflow-hidden rounded-3xl border-[3px] bg-white p-6 transition-all duration-500",
         colors.border,
         mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       )}
-      style={{ boxShadow: '4px 4px 0px #2D3436' }}
-    >
+      style={{ boxShadow: `4px 4px 0px ${colors.hex}` }}
+      whileHover={{
+        y: -8,
+        boxShadow: `8px 8px 0px ${colors.hex}`,
+      }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}>
       <div className="relative">
         <div className="flex items-start justify-between mb-4">
-          <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436]", colors.bg, colors.text)}>
+          <motion.div
+            className={cn("w-12 h-12 rounded-2xl flex items-center justify-center border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436]", colors.bg, colors.text)}
+            whileHover={{ rotate: [0, -10, 10, 0], scale: 1.05 }}
+            transition={{ duration: 0.5 }}>
             {icon}
-          </div>
+          </motion.div>
           {trend && (
-            <span className="font-display text-xs font-semibold px-3 py-1 rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] border-[2px] border-[#FF6B6B]">
+            <motion.span
+              className="font-display text-xs font-semibold px-3 py-1 rounded-full bg-[#FF6B6B]/10 text-[#FF6B6B] border-[2px] border-[#FF6B6B]"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}>
               {trend}
-            </span>
+            </motion.span>
           )}
         </div>
 
         <p className="font-body text-[#636E72] text-sm font-medium mb-1">
           {title}
         </p>
-        <p className="font-display text-3xl font-bold text-[#2D3436]">
+        <motion.p
+          className="font-display text-3xl font-bold text-[#2D3436]"
+          initial={{ scale: 0.5 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17, delay: delay / 1000 + 0.2 }}>
           {value.toLocaleString()}
-        </p>
+        </motion.p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -235,11 +274,11 @@ interface ConfessionCardProps {
   onSelect: (checked: boolean) => void;
 }
 
-function ConfessionCard({ 
-  confession, 
-  onApprove, 
-  onReject, 
-  onEdit, 
+function ConfessionCard({
+  confession,
+  onApprove,
+  onReject,
+  onEdit,
   isProcessing,
   selected,
   onSelect,
@@ -271,10 +310,18 @@ function ConfessionCard({
   };
 
   return (
-    <div className={cn(
-      "group relative bg-white rounded-3xl border-[3px] transition-all duration-300",
-      selected ? 'border-[#9B59B6] shadow-[4px_4px_0px_#9B59B6]' : 'border-[#2D3436] shadow-[4px_4px_0px_#2D3436]'
-    )}>
+    <motion.div
+      className={cn(
+        "group relative bg-white rounded-3xl border-[3px] transition-all duration-300",
+        selected ? 'border-[#9B59B6] shadow-[4px_4px_0px_#9B59B6]' : 'border-[#2D3436] shadow-[4px_4px_0px_#2D3436]'
+      )}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{
+        y: -4,
+        boxShadow: selected ? "6px 6px 0px #9B59B6" : "6px 6px 0px #2D3436",
+      }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}>
       {/* Selection Checkbox */}
       <div className="absolute top-4 left-4 z-10">
         <input
@@ -312,10 +359,11 @@ function ConfessionCard({
       <div className="px-4 pb-4 pl-12">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
               onClick={handleCopy}
               className="h-9 px-3 rounded-xl font-body text-sm text-[#636E72] hover:text-[#2D3436] hover:bg-[#F4F4F5] border-[2px] border-transparent hover:border-[#2D3436] transition-all flex items-center gap-1"
-            >
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}>
               {copied ? (
                 <>
                   <Check className="w-4 h-4 text-[#1DD1A1]" />
@@ -327,38 +375,59 @@ function ConfessionCard({
                   <span>Copy</span>
                 </>
               )}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => onEdit(confession.id, confession.content)}
               disabled={isProcessing}
               className="h-9 px-3 rounded-xl font-body text-sm text-[#636E72] hover:text-[#2D3436] hover:bg-[#F4F4F5] border-[2px] border-transparent hover:border-[#2D3436] transition-all flex items-center gap-1 disabled:opacity-50"
-            >
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}>
               <Edit2 className="w-4 h-4" />
               <span>Edit</span>
-            </button>
+            </motion.button>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
               onClick={() => onReject(confession.id)}
               disabled={isProcessing}
-              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#FF6B6B] bg-white border-[3px] border-[#FF6B6B] shadow-[2px_2px_0px_#FF6B6B] hover:shadow-[4px_4px_0px_#FF6B6B] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#FF6B6B] active:translate-y-0 transition-all flex items-center gap-1 disabled:opacity-50"
-            >
+              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#FF6B6B] bg-white border-[3px] border-[#FF6B6B] shadow-[2px_2px_0px_#FF6B6B] flex items-center gap-1 disabled:opacity-50"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "4px 4px 0px #FF6B6B",
+                y: -2,
+              }}
+              whileTap={{
+                scale: 0.98,
+                boxShadow: "1px 1px 0px #FF6B6B",
+                y: 0,
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <XCircle className="w-4 h-4" />
               <span>Reject</span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => onApprove(confession.id)}
               disabled={isProcessing}
-              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-white bg-[#1DD1A1] border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all flex items-center gap-1 disabled:opacity-50"
-            >
+              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-white bg-[#1DD1A1] border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] flex items-center gap-1 disabled:opacity-50"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "4px 4px 0px #2D3436",
+                y: -2,
+              }}
+              whileTap={{
+                scale: 0.98,
+                boxShadow: "1px 1px 0px #2D3436",
+                y: 0,
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <CheckCircle2 className="w-4 h-4" />
               <span>Approve</span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -715,13 +784,23 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#FFFBF5]">
+      {/* Animated Clouds Background */}
+      <AnimatedClouds className="opacity-50" />
+
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b-[3px] border-[#2D3436]">
+      <motion.header
+        className="sticky top-0 z-40 bg-[#FFFBF5]/90 backdrop-blur-sm border-b-[3px] border-[#2D3436]"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[#FFD93D] border-[3px] border-[#2D3436] flex items-center justify-center shadow-[2px_2px_0px_#2D3436]">
+            <motion.div
+              className="w-10 h-10 rounded-full bg-[#FFD93D] border-[3px] border-[#2D3436] flex items-center justify-center shadow-[2px_2px_0px_#2D3436]"
+              animate={{ rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
               <LayoutDashboard className="w-5 h-5 text-[#2D3436]" />
-            </div>
+            </motion.div>
             <div>
               <h1 className="font-display font-bold text-[#2D3436]">Dashboard</h1>
               <p className="font-body text-xs text-[#636E72]">Moderation Panel</p>
@@ -729,26 +808,42 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
               onClick={() => fetchConfessions(0)}
               disabled={isLoading}
-              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all flex items-center gap-2 disabled:opacity-50"
-            >
+              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] flex items-center gap-2 disabled:opacity-50"
+              whileHover={{
+                boxShadow: "4px 4px 0px #2D3436",
+                y: -2,
+              }}
+              whileTap={{
+                boxShadow: "1px 1px 0px #2D3436",
+                y: 0,
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
               Refresh
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={handleLogout}
-              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#FF6B6B] bg-white border-[3px] border-[#FF6B6B] shadow-[2px_2px_0px_#FF6B6B] hover:shadow-[4px_4px_0px_#FF6B6B] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#FF6B6B] active:translate-y-0 transition-all flex items-center gap-2"
-            >
+              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#FF6B6B] bg-white border-[3px] border-[#FF6B6B] shadow-[2px_2px_0px_#FF6B6B] flex items-center gap-2"
+              whileHover={{
+                boxShadow: "4px 4px 0px #FF6B6B",
+                y: -2,
+              }}
+              whileTap={{
+                boxShadow: "1px 1px 0px #FF6B6B",
+                y: 0,
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <LogOut className="w-4 h-4" />
               Logout
-            </button>
+            </motion.button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         {/* Stats Grid */}
         {stats && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -788,7 +883,13 @@ export default function AdminPage() {
           {/* Main Content - Confessions List */}
           <div className="lg:col-span-2 space-y-6">
             {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] p-4">
+            <motion.div
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] p-4"
+              whileHover={{
+                y: -4,
+                boxShadow: "6px 6px 0px #2D3436",
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <div className="flex items-center gap-3">
                 <input
                   type="checkbox"
@@ -803,95 +904,166 @@ export default function AdminPage() {
 
               {selectedIds.size > 0 && (
                 <div className="flex items-center gap-2">
-                  <button
+                  <motion.button
                     onClick={handleBulkReject}
                     disabled={isLoading}
-                    className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#FF6B6B] bg-white border-[3px] border-[#FF6B6B] shadow-[2px_2px_0px_#FF6B6B] hover:shadow-[4px_4px_0px_#FF6B6B] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#FF6B6B] active:translate-y-0 transition-all flex items-center gap-1 disabled:opacity-50"
-                  >
+                    className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#FF6B6B] bg-white border-[3px] border-[#FF6B6B] shadow-[2px_2px_0px_#FF6B6B] flex items-center gap-1 disabled:opacity-50"
+                    whileHover={{
+                      boxShadow: "4px 4px 0px #FF6B6B",
+                      y: -2,
+                    }}
+                    whileTap={{
+                      boxShadow: "1px 1px 0px #FF6B6B",
+                      y: 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}>
                     <XCircle className="w-4 h-4" />
                     Reject All
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     onClick={handleBulkApprove}
                     disabled={isLoading}
-                    className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-white bg-[#1DD1A1] border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all flex items-center gap-1 disabled:opacity-50"
-                  >
+                    className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-white bg-[#1DD1A1] border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] flex items-center gap-1 disabled:opacity-50"
+                    whileHover={{
+                      boxShadow: "4px 4px 0px #2D3436",
+                      y: -2,
+                    }}
+                    whileTap={{
+                      boxShadow: "1px 1px 0px #2D3436",
+                      y: 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}>
                     <CheckCircle2 className="w-4 h-4" />
                     Approve All
-                  </button>
+                  </motion.button>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Confessions List */}
             {isLoading && confessions.length === 0 ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-40 bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] animate-pulse" />
+                  <motion.div
+                    key={i}
+                    className="h-40 bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436]"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}>
+                    <div className="h-full w-full animate-pulse bg-gradient-to-r from-gray-100 to-gray-200 rounded-3xl" />
+                  </motion.div>
                 ))}
               </div>
             ) : error ? (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 rounded-full bg-[#FF6B6B]/10 flex items-center justify-center mx-auto mb-4 border-[3px] border-[#FF6B6B]">
+              <motion.div
+                className="text-center py-12 bg-white rounded-3xl border-[3px] border-[#FF6B6B] shadow-[4px_4px_0px_#FF6B6B]"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}>
+                <motion.div
+                  className="w-20 h-20 rounded-full bg-[#FF6B6B]/10 flex items-center justify-center mx-auto mb-4 border-[3px] border-[#FF6B6B]"
+                  animate={{ rotate: [0, -5, 5, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
                   <AlertCircle className="w-10 h-10 text-[#FF6B6B]" />
-                </div>
+                </motion.div>
                 <p className="font-body text-[#636E72]">{error}</p>
-                <button 
-                  onClick={() => fetchConfessions(0)} 
-                  className="mt-4 h-10 px-6 rounded-xl font-display font-semibold text-sm text-[#2D3436] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 transition-all"
-                >
+                <motion.button
+                  onClick={() => fetchConfessions(0)}
+                  className="mt-4 h-10 px-6 rounded-xl font-display font-semibold text-sm text-[#2D3436] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436]"
+                  whileHover={{
+                    boxShadow: "4px 4px 0px #2D3436",
+                    y: -2,
+                  }}
+                  whileTap={{
+                    boxShadow: "1px 1px 0px #2D3436",
+                    y: 0,
+                  }}>
                   Try Again
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             ) : confessions.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436]">
-                <div className="w-20 h-20 rounded-full bg-[#1DD1A1]/10 flex items-center justify-center mx-auto mb-4 border-[3px] border-[#1DD1A1]">
+              <motion.div
+                className="text-center py-16 bg-white rounded-3xl border-[3px] border-[#1DD1A1] shadow-[4px_4px_0px_#1DD1A1]"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{
+                  y: -4,
+                  boxShadow: "6px 6px 0px #1DD1A1",
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+                <motion.div
+                  className="w-20 h-20 rounded-full bg-[#1DD1A1]/10 flex items-center justify-center mx-auto mb-4 border-[3px] border-[#1DD1A1]"
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}>
                   <CheckCircle2 className="w-10 h-10 text-[#1DD1A1]" />
-                </div>
+                </motion.div>
                 <h3 className="font-display text-xl font-bold text-[#2D3436] mb-2">
                   All caught up!
                 </h3>
                 <p className="font-body text-[#636E72] text-sm">
                   No pending confessions to review
                 </p>
-              </div>
+              </motion.div>
             ) : (
               <div className="space-y-4">
-                {confessions.map((confession) => (
-                  <ConfessionCard
-                    key={confession.id}
-                    confession={confession}
-                    onApprove={handleApprove}
-                    onReject={handleReject}
-                    onEdit={handleStartEdit}
-                    isProcessing={processingIds.has(confession.id)}
-                    selected={selectedIds.has(confession.id)}
-                    onSelect={(checked) => handleSelectOne(confession.id, checked)}
-                  />
-                ))}
+                <AnimatePresence mode="popLayout">
+                  {confessions.map((confession, index) => (
+                    <motion.div
+                      key={confession.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: index * 0.05 }}>
+                      <ConfessionCard
+                        confession={confession}
+                        onApprove={handleApprove}
+                        onReject={handleReject}
+                        onEdit={handleStartEdit}
+                        isProcessing={processingIds.has(confession.id)}
+                        selected={selectedIds.has(confession.id)}
+                        onSelect={(checked) => handleSelectOne(confession.id, checked)}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             )}
 
             {/* Pagination */}
             {(hasMore || offset > 0) && (
               <div className="flex items-center justify-center gap-2 pt-4">
-                <button
+                <motion.button
                   onClick={() => fetchConfessions(Math.max(0, offset - limit))}
                   disabled={offset === 0 || isLoading}
-                  className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all disabled:opacity-50"
-                >
+                  className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] disabled:opacity-50"
+                  whileHover={{
+                    boxShadow: "4px 4px 0px #2D3436",
+                    y: -2,
+                  }}
+                  whileTap={{
+                    boxShadow: "1px 1px 0px #2D3436",
+                    y: 0,
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}>
                   Previous
-                </button>
+                </motion.button>
                 <span className="font-body text-sm text-[#636E72] px-4">
                   Page {Math.floor(offset / limit) + 1}
                 </span>
-                <button
+                <motion.button
                   onClick={() => fetchConfessions(offset + limit)}
                   disabled={!hasMore || isLoading}
-                  className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all disabled:opacity-50"
-                >
+                  className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] disabled:opacity-50"
+                  whileHover={{
+                    boxShadow: "4px 4px 0px #2D3436",
+                    y: -2,
+                  }}
+                  whileTap={{
+                    boxShadow: "1px 1px 0px #2D3436",
+                    y: 0,
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}>
                   Next
-                </button>
+                </motion.button>
               </div>
             )}
           </div>
@@ -899,39 +1071,68 @@ export default function AdminPage() {
           {/* Sidebar - Activity & Quick Stats */}
           <div className="space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] p-6">
+            <motion.div
+              className="bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] p-6"
+              style={{ boxShadow: "4px 4px 0px #FFD93D" }}
+              whileHover={{
+                y: -4,
+                boxShadow: "6px 6px 0px #FFD93D",
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <h3 className="font-display font-bold text-[#2D3436] mb-4 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#FFD93D] border-[2px] border-[#2D3436] flex items-center justify-center">
+                <motion.div
+                  className="w-8 h-8 rounded-xl bg-[#FFD93D] border-[2px] border-[#2D3436] flex items-center justify-center"
+                  whileHover={{ rotate: 10 }}
+                  transition={{ type: "spring", stiffness: 400 }}>
                   <Zap className="w-4 h-4 text-[#2D3436]" />
-                </div>
+                </motion.div>
                 Quick Actions
               </h3>
               <div className="space-y-2">
-                <button
+                <motion.button
                   onClick={() => fetchConfessions(0)}
-                  className="w-full h-10 px-4 rounded-xl font-body text-sm text-[#2D3436] bg-[#F4F4F5] border-[2px] border-[#2D3436] hover:bg-[#FFD93D] transition-all flex items-center justify-center gap-2"
-                >
+                  className="w-full h-10 px-4 rounded-xl font-body text-sm text-[#2D3436] bg-[#F4F4F5] border-[2px] border-[#2D3436] flex items-center justify-center gap-2"
+                  whileHover={{
+                    scale: 1.02,
+                    backgroundColor: "#FFD93D",
+                  }}
+                  whileTap={{ scale: 0.98 }}>
                   <RefreshCw className="w-4 h-4" />
                   Refresh Queue
-                </button>
-                <a
+                </motion.button>
+                <motion.a
                   href="https://threads.net"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center h-10 px-4 rounded-xl font-body text-sm text-[#2D3436] bg-[#F4F4F5] border-[2px] border-[#2D3436] hover:bg-[#4A90E2] hover:text-white transition-all gap-2"
-                >
+                  className="flex items-center justify-center h-10 px-4 rounded-xl font-body text-sm text-[#2D3436] bg-[#F4F4F5] border-[2px] border-[#2D3436] gap-2"
+                  whileHover={{
+                    scale: 1.02,
+                    backgroundColor: "#4A90E2",
+                    color: "#ffffff",
+                  }}
+                  whileTap={{ scale: 0.98 }}>
                   <ExternalLink className="w-4 h-4" />
                   View Threads
-                </a>
+                </motion.a>
               </div>
-            </div>
+            </motion.div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] p-6">
+            <motion.div
+              className="bg-white rounded-3xl border-[3px] border-[#2D3436] shadow-[4px_4px_0px_#2D3436] p-6"
+              style={{ boxShadow: "4px 4px 0px #9B59B6" }}
+              whileHover={{
+                y: -4,
+                boxShadow: "6px 6px 0px #9B59B6",
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               <h3 className="font-display font-bold text-[#2D3436] mb-4 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#9B59B6] border-[2px] border-[#2D3436] flex items-center justify-center">
+                <motion.div
+                  className="w-8 h-8 rounded-xl bg-[#9B59B6] border-[2px] border-[#2D3436] flex items-center justify-center"
+                  animate={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
                   <Activity className="w-4 h-4 text-white" />
-                </div>
+                </motion.div>
                 Recent Activity
               </h3>
               {activities.length === 0 ? (
@@ -940,61 +1141,81 @@ export default function AdminPage() {
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {activities.map((activity) => (
-                    <div key={activity.id} className="flex items-start gap-3 text-sm">
-                      <div className={cn(
-                        "w-3 h-3 rounded-full mt-1.5 border-[2px] border-[#2D3436]",
-                        activity.action === 'approved' && "bg-[#1DD1A1]",
-                        activity.action === 'rejected' && "bg-[#FF6B6B]",
-                        activity.action === 'posted' && "bg-[#9B59B6]"
-                      )} />
-                      <div className="flex-1">
-                        <p className="font-body text-[#636E72]">
-                          <span className="text-[#2D3436] font-semibold">
-                            #{activity.confessionId}
-                          </span>
-                          {' '}{activity.action}
-                        </p>
-                        <p className="font-body text-[#B2BEC3] text-xs">
-                          {new Date(activity.timestamp).toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                  <AnimatePresence>
+                    {activities.map((activity) => (
+                      <motion.div
+                        key={activity.id}
+                        className="flex items-start gap-3 text-sm"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}>
+                        <motion.div
+                          className={cn(
+                            "w-3 h-3 rounded-full mt-1.5 border-[2px] border-[#2D3436]",
+                            activity.action === 'approved' && "bg-[#1DD1A1]",
+                            activity.action === 'rejected' && "bg-[#FF6B6B]",
+                            activity.action === 'posted' && "bg-[#9B59B6]"
+                          )}
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }} />
+                        <div className="flex-1">
+                          <p className="font-body text-[#636E72]">
+                            <span className="text-[#2D3436] font-semibold">
+                              #{activity.confessionId}
+                            </span>
+                            {' '}{activity.action}
+                          </p>
+                          <p className="font-body text-[#B2BEC3] text-xs">
+                            {new Date(activity.timestamp).toLocaleTimeString()}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Performance Stats */}
             {stats && (
-              <div className="bg-gradient-to-br from-[#9B59B6]/10 to-[#FF7EB3]/10 rounded-3xl border-[3px] border-[#9B59B6]/30 shadow-[4px_4px_0px_#9B59B6]/20 p-6">
+              <motion.div
+                className="bg-gradient-to-br from-[#9B59B6]/10 to-[#FF7EB3]/10 rounded-3xl border-[3px] border-[#9B59B6] p-6"
+                style={{ boxShadow: "4px 4px 0px #9B59B6" }}
+                whileHover={{
+                  y: -4,
+                  boxShadow: "6px 6px 0px #9B59B6",
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}>
                 <h3 className="font-display font-bold text-[#2D3436] mb-4 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#9B59B6] border-[2px] border-[#2D3436] flex items-center justify-center">
+                  <motion.div
+                    className="w-8 h-8 rounded-xl bg-[#9B59B6] border-[2px] border-[#2D3436] flex items-center justify-center"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}>
                     <BarChart3 className="w-4 h-4 text-white" />
-                  </div>
+                  </motion.div>
                   Performance
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-[#636E72]">Approval Rate</span>
-                    <span className="text-[#2D3436] font-semibold">
+                    <motion.span
+                      className="text-[#2D3436] font-semibold"
+                      key={stats.approved}
+                      initial={{ scale: 1.5, color: "#1DD1A1" }}
+                      animate={{ scale: 1, color: "#2D3436" }}>
                       {stats.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0}%
-                    </span>
+                    </motion.span>
                   </div>
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-[#636E72]">Auto-posted</span>
-                    <span className="text-[#2D3436] font-semibold">
-                      {stats.posted}
-                    </span>
+                    <span className="text-[#2D3436] font-semibold">{stats.posted}</span>
                   </div>
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-[#636E72]">Total Processed</span>
-                    <span className="text-[#2D3436] font-semibold">
-                      {stats.total}
-                    </span>
+                    <span className="text-[#2D3436] font-semibold">{stats.total}</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
@@ -1005,9 +1226,12 @@ export default function AdminPage() {
         <DialogContent className="sm:max-w-lg bg-white border-[3px] border-[#2D3436] shadow-[8px_8px_0px_#2D3436] rounded-3xl">
           <DialogHeader>
             <DialogTitle className="font-display font-bold text-[#2D3436] flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#9B59B6] border-[2px] border-[#2D3436] flex items-center justify-center">
+              <motion.div
+                className="w-8 h-8 rounded-xl bg-[#9B59B6] border-[2px] border-[#2D3436] flex items-center justify-center"
+                animate={{ rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}>
                 <Edit2 className="w-4 h-4 text-white" />
-              </div>
+              </motion.div>
               Edit Confession #{editingId}
             </DialogTitle>
           </DialogHeader>
@@ -1024,18 +1248,34 @@ export default function AdminPage() {
             </p>
           </div>
           <DialogFooter className="gap-2">
-            <button
+            <motion.button
               onClick={handleCancelEdit}
               disabled={isSavingEdit}
-              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all disabled:opacity-50"
-            >
+              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-[#636E72] bg-white border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] disabled:opacity-50"
+              whileHover={{
+                boxShadow: "4px 4px 0px #2D3436",
+                y: -2,
+              }}
+              whileTap={{
+                boxShadow: "1px 1px 0px #2D3436",
+                y: 0,
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               Cancel
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={handleSaveEdit}
               disabled={isSavingEdit || !editContent.trim()}
-              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-white bg-[#9B59B6] border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] hover:shadow-[4px_4px_0px_#2D3436] hover:-translate-y-0.5 active:shadow-[1px_1px_0px_#2D3436] active:translate-y-0 transition-all flex items-center gap-2 disabled:opacity-50"
-            >
+              className="h-10 px-4 rounded-xl font-display font-semibold text-sm text-white bg-[#9B59B6] border-[3px] border-[#2D3436] shadow-[2px_2px_0px_#2D3436] flex items-center gap-2 disabled:opacity-50"
+              whileHover={{
+                boxShadow: "4px 4px 0px #2D3436",
+                y: -2,
+              }}
+              whileTap={{
+                boxShadow: "1px 1px 0px #2D3436",
+                y: 0,
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}>
               {isSavingEdit ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -1044,10 +1284,88 @@ export default function AdminPage() {
               ) : (
                 'Save Changes'
               )}
-            </button>
+            </motion.button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Footer */}
+      <footer className="bg-white border-t-[3px] border-[#2D3436] py-6 mt-8 relative z-10">
+        <div className="max-w-6xl mx-auto px-4">
+          <motion.div
+            className="flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}>
+            {/* Logo */}
+            <a
+              href="/"
+              className="font-display font-bold text-lg text-[#2D3436] hover:text-[#4A90E2] transition-colors">
+              ceritaAnon
+            </a>
+
+            {/* Navigation Links */}
+            <nav className="flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-5 gap-y-1">
+              <a
+                href="/about"
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                About
+              </a>
+              <a
+                href="/faq"
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                FAQ
+              </a>
+              <a
+                href="/privacy"
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                Privacy
+              </a>
+              <a
+                href="/admin"
+                className="font-body text-sm text-[#636E72] hover:text-[#2D3436] transition-colors">
+                Admin
+              </a>
+              <span className="hidden sm:inline text-[#DFE6E9] mx-1">|</span>
+              <span className="inline-flex items-center gap-3">
+                <a
+                  href="https://threads.net/@ceritaanon_"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-body text-sm text-[#636E72] hover:text-[#4A90E2] transition-colors inline-flex items-center gap-1.5 group whitespace-nowrap">
+                  <span className="opacity-70 group-hover:opacity-100 transition-opacity">
+                    <ThreadsIcon size={14} />
+                  </span>
+                  <span>Threads</span>
+                </a>
+                <a
+                  href="https://www.buymeacoffee.com/ikhmalhanif"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-body text-sm text-[#636E72] hover:text-[#FF7EB3] transition-colors inline-flex items-center gap-1 whitespace-nowrap">
+                  <span>☕</span>
+                  <span>Support</span>
+                </a>
+              </span>
+            </nav>
+
+            {/* Made with love */}
+            <span className="font-body text-xs text-[#B2BEC3]">
+              Made with 💕
+            </span>
+          </motion.div>
+
+          <motion.p
+            className="mt-4 pt-4 border-t border-[#DFE6E9] text-center font-body text-xs text-[#B2BEC3]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}>
+            A safe space for the unspoken. Built with care and lots of doodles.
+          </motion.p>
+        </div>
+      </footer>
     </div>
   );
 }
